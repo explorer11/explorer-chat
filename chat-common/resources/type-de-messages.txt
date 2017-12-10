@@ -1,0 +1,8 @@
+liste::toto,titi
+arrivee::toto
+depart::toto
+phrase::toto::je dis ça
+
+password ?
+nom ?
+authen échec

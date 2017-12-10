@@ -1,0 +1,17 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+
+unitTestFile.txt
+server.log
+
+.recommenders/
+.metadata/
+.settings/
+.project
+.idea/
+.classpath
+.springBeans
+target/
