@@ -7,5 +7,5 @@ public enum ChatMessageType {
 	LEAVING,
 	CONNECTION_ERROR,
 	WELCOME,
-	SENTENCE;
+	SENTENCE
 }

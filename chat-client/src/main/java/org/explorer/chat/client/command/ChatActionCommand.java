@@ -1,5 +1,11 @@
 package org.explorer.chat.client.command;
 
+import org.explorer.chat.client.ServerMessageReader;
+import org.explorer.chat.client.presentation.ChatClientFrame;
+import org.explorer.chat.client.presentation.ClientConnectionFrame;
+import org.explorer.chat.common.ChatMessage;
+import org.explorer.chat.common.UsersList;
+
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,12 +13,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.explorer.chat.client.ServerMessageReader;
-import org.explorer.chat.client.presentation.ChatClientFrame;
-import org.explorer.chat.client.presentation.ClientConnectionFrame;
-import org.explorer.chat.common.ChatMessage;
-import org.explorer.chat.common.UsersList;
 
 public class ChatActionCommand extends ClientLaunchCommand {
 	
@@ -24,7 +24,7 @@ public class ChatActionCommand extends ClientLaunchCommand {
 	
 	private ExecutorService messageReaderExecutorService = Executors.newFixedThreadPool(1);
 	
-	public ChatActionCommand(InputStream inputStream, OutputStream outputStream) {
+	ChatActionCommand(InputStream inputStream, OutputStream outputStream) {
 		super();
 		this.fromServerInputStream = inputStream;
 		this.toServerOutputStream = outputStream;
@@ -69,7 +69,7 @@ public class ChatActionCommand extends ClientLaunchCommand {
 	}
 	
 	@Override
-	protected void end() throws InterruptedException {
+	protected void end() {
 		this.messageReaderExecutorService.shutdownNow();
 		System.out.println("ChatActionCommand::end");
 	}

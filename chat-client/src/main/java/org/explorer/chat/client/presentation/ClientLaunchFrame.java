@@ -33,7 +33,7 @@ public class ClientLaunchFrame extends JFrame implements IChatClientFrame {
 		setVisible(true);
 	}
 	
-	protected JPanel buildJPanel(){
+	private JPanel buildJPanel(){
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		

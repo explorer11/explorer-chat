@@ -1,14 +1,13 @@
 package org.explorer.chat.server;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Optional;
-
 import org.apache.commons.lang3.StringUtils;
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.ChatMessageReaderStrategy;
 import org.explorer.chat.common.ChatMessageType;
-import org.explorer.chat.server.ChatOutputWriter;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Optional;
 
 public class ClientAuthenticationStrategy implements ChatMessageReaderStrategy {
 	
@@ -61,7 +60,7 @@ public class ClientAuthenticationStrategy implements ChatMessageReaderStrategy {
 		}
 	}
 
-	public Optional<String> getClientName() {
+	Optional<String> getClientName() {
 		return Optional.ofNullable(clientName);
 	}
 

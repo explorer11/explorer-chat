@@ -89,9 +89,7 @@ public class ChatMessage implements Serializable {
 				return false;
 		} else if (!message.equals(other.message))
 			return false;
-		if (messageType != other.messageType)
-			return false;
-		return true;
+		return messageType == other.messageType;
 	}
 	
 	@Override

@@ -10,7 +10,7 @@ public class ClientConnectionStrategy implements ChatMessageReaderStrategy {
 	
 	private final String clientName;
 
-	public ClientConnectionStrategy(String clientName) {
+	ClientConnectionStrategy(String clientName) {
 		super();
 		this.clientName = clientName;
 	}

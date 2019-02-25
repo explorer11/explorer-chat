@@ -10,7 +10,7 @@ public class ClientChatMessageStrategy implements ChatMessageReaderStrategy {
 
 	private final ChatActionCommand chatActionCommand;
 	
-	public ClientChatMessageStrategy(ChatActionCommand chatActionCommand) {
+	ClientChatMessageStrategy(ChatActionCommand chatActionCommand) {
 		super();
 		this.chatActionCommand = chatActionCommand;
 	}

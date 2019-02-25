@@ -1,5 +1,9 @@
 package org.explorer.chat.client.command;
 
+import org.explorer.chat.client.ClientArgs;
+import org.explorer.chat.client.presentation.ClientLaunchFrame;
+import org.explorer.chat.client.presentation.IChatClientFrame;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -13,10 +17,6 @@ import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import org.explorer.chat.client.ClientArgs;
-import org.explorer.chat.client.presentation.ClientLaunchFrame;
-import org.explorer.chat.client.presentation.IChatClientFrame;
-
 public class ClientLaunchCommand implements ActionListener {
 
 	private ClientLaunchFrame clientLaunchFrame;
@@ -24,14 +24,14 @@ public class ClientLaunchCommand implements ActionListener {
 	
 	private ClientArgs clientArgs = null;
 	
-	protected IChatClientFrame activeFrame;
+	IChatClientFrame activeFrame;
 	
 	protected void openFrame(){
 		clientLaunchFrame = new ClientLaunchFrame();
 		prepareClientFrameListening(clientLaunchFrame);
 	}
 	
-	protected void prepareClientFrameListening(IChatClientFrame aClientFrame){
+	void prepareClientFrameListening(IChatClientFrame aClientFrame){
 		activeFrame = aClientFrame;
 		aClientFrame.getSendButton().addActionListener(this);
 		aClientFrame.getRootPane().setDefaultButton(aClientFrame.getSendButton());
@@ -53,7 +53,7 @@ public class ClientLaunchCommand implements ActionListener {
 		
 		final Integer localPort = Integer.valueOf(localPortStr);
 
-		clientArgs = new ClientArgs(null, serverIP, localPort);
+		clientArgs = new ClientArgs(serverIP, localPort);
 		
 		clientLaunchFrame.setVisible(false);
 		clientLaunchFrame.dispose();
@@ -61,7 +61,7 @@ public class ClientLaunchCommand implements ActionListener {
 	}
 	
 	public void start() throws InterruptedException {
-		this.queue = new ArrayBlockingQueue<String>(1);
+		this.queue = new ArrayBlockingQueue<>(1);
 		System.out.println("start::wait client input");
 		this.openFrame();
 		// wait until the client has filled the inputs
@@ -84,7 +84,7 @@ public class ClientLaunchCommand implements ActionListener {
 			Socket withServerSocket = new Socket(InetAddress.getByName(this.clientArgs.getServerIP()), 60000, InetAddress.getLocalHost(), this.clientArgs.getLocalPort());
 				
 			OutputStream outputStream = withServerSocket.getOutputStream();
-			InputStream inputStream = withServerSocket.getInputStream();
+			InputStream inputStream = withServerSocket.getInputStream()
 		) {
 			
 			ChatActionCommand chatActionCommand = new ChatActionCommand(inputStream, outputStream);			

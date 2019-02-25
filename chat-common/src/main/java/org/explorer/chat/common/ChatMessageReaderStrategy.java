@@ -4,8 +4,8 @@ import java.io.OutputStream;
 
 public interface ChatMessageReaderStrategy {
 	
-	public void handleInterruption();
+	void handleInterruption();
 	
-	public boolean apply(ChatMessage chatMessage, OutputStream outputStream);
+	boolean apply(ChatMessage chatMessage, OutputStream outputStream);
 	
 }

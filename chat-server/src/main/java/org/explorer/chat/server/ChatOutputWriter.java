@@ -19,7 +19,7 @@ public enum ChatOutputWriter {
 	
 	private Logger logger = LoggerFactory.getLogger(ChatOutputWriter.class);
 	
-	private Map<String, OutputStream> objectWriters = new ConcurrentHashMap<String, OutputStream>();
+	private Map<String, OutputStream> objectWriters = new ConcurrentHashMap<>();
 	
 	public void add(String user, OutputStream p){
 		objectWriters.put(user, p);

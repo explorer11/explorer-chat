@@ -36,13 +36,13 @@ public class ChatClientFrame extends JFrame implements IChatClientFrame {
 		this.pack();
 	}
 	
-	protected JPanel buildJPanel(){
+	private JPanel buildJPanel(){
 		JPanel panel = new JPanel(/*new BorderLayout()*/);
 		panel.setLayout(defineGroupLayout(panel));
 		return panel;
 	}
 	
-	protected JScrollPane buildMessagesTextArea(){
+	private JScrollPane buildMessagesTextArea(){
 		JTextArea jTextArea = new JTextArea();
 		jTextArea.setEditable(false);
 		JScrollPane scrollPane = new JScrollPane(jTextArea);
@@ -51,7 +51,7 @@ public class ChatClientFrame extends JFrame implements IChatClientFrame {
 		return scrollPane;
 	}
 	
-	protected JScrollPane buildUsersTextArea(){
+	private JScrollPane buildUsersTextArea(){
 		JTextArea jTextArea = new JTextArea();
 		jTextArea.setEditable(false);
 		JScrollPane scrollPane = new JScrollPane(jTextArea);
@@ -60,20 +60,20 @@ public class ChatClientFrame extends JFrame implements IChatClientFrame {
 		return scrollPane;
 	}
 	
-	protected JTextComponent buildTextInput(){
+	private JTextComponent buildTextInput(){
 		JTextField jTextField = new JTextField("");
 		jTextField.setMaximumSize(new Dimension(600, 20));
 		this.textComponent = jTextField;
 		return jTextField;
 	}
 	
-	protected JButton buildSendButton(){
+	private JButton buildSendButton(){
 		sendButton = new JButton("Envoyer");
 		sendButton.setPreferredSize(new Dimension(100, 20));
 		return sendButton;
 	}
 
-	public LayoutManager defineGroupLayout(JPanel panneau){
+	private LayoutManager defineGroupLayout(JPanel panneau){
 		GroupLayout layout = new GroupLayout(panneau);
 		panneau.setLayout(layout);
         JScrollPane messagesScrollPane = buildMessagesTextArea();

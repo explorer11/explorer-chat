@@ -1,11 +1,11 @@
 package org.explorer.chat.server;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Server {
 	
@@ -15,7 +15,7 @@ public class Server {
 		
 		while(true){
 			try {
-				
+
 				ClientSocketManager clientSocketManager = new ClientSocketManager(ChatServerSocket.INSTANCE.getServerSocket().accept());
 				
 				ExecutorService executorService = Executors.newSingleThreadExecutor();
