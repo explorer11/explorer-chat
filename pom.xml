@@ -23,9 +23,10 @@
 	
 	<modules>
 		<module>chat-common</module>
-		<module>chat-client</module>
-		<module>chat-server</module>
-	</modules>
+        <module>chat-solr</module>
+        <module>chat-client</module>
+        <module>chat-server</module>
+    </modules>
 
     <dependencies>
         <dependency>

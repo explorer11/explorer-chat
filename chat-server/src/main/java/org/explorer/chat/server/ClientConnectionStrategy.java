@@ -1,27 +1,35 @@
 package org.explorer.chat.server;
 
-import java.io.OutputStream;
-
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.ChatMessageReaderStrategy;
 import org.explorer.chat.common.ChatMessageType;
+import org.explorer.chat.server.collect.MessageCollector;
+
+import java.io.OutputStream;
 
 public class ClientConnectionStrategy implements ChatMessageReaderStrategy {
 	
 	private final String clientName;
+	private final MessageCollector messageCollector;
 
-	ClientConnectionStrategy(String clientName) {
+	ClientConnectionStrategy(String clientName, final MessageCollector messageCollector) {
 		super();
 		this.clientName = clientName;
+		this.messageCollector = messageCollector;
 	}
 
 	@Override
 	public boolean apply(ChatMessage chatMessage, OutputStream outputStream) {
-		ChatOutputWriter.INSTANCE.writeToAll(new ChatMessage.ChatMessageBuilder()
+
+		final ChatMessage builtChatMessage = new ChatMessage.ChatMessageBuilder()
 				.withMessageType(ChatMessageType.SENTENCE)
 				.withFromUserMessage(clientName)
 				.withMessage(chatMessage.getMessage())
-				.build());
+				.build();
+		ChatOutputWriter.INSTANCE.writeToAll(builtChatMessage);
+
+		messageCollector.write(builtChatMessage);
+
 		return false;
 	}
 
