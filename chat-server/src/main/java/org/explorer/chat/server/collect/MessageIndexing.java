@@ -2,11 +2,32 @@ package org.explorer.chat.server.collect;
 
 import org.explorer.chat.common.ChatMessage;
 
-class MessageIndexing {
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-    void start(){}
+public class MessageIndexing {
 
-    void write(final ChatMessage chatMessage){}
+    private final BlockingQueue<ChatMessage> queue = new ArrayBlockingQueue<>(100);
+    private final MessageCollector messageCollector = new MessageCollector(queue);
+    private final MessageSender messageSender;
 
-    void send(final ChatMessage chatMessage){}
+    MessageIndexing(final MessageSender messageSender) {
+        this.messageSender = messageSender;
+    }
+
+    public MessageIndexing() {
+        this.messageSender = new MessageSender(queue);
+    }
+
+    public void start(){
+        messageSender.setQueue(queue);
+        final ExecutorService collectorExecutorService = Executors.newSingleThreadExecutor();
+        collectorExecutorService.submit(messageSender);
+    }
+
+    void write(final ChatMessage chatMessage){
+        messageCollector.write(chatMessage);
+    }
 }

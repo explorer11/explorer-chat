@@ -5,12 +5,19 @@ import org.explorer.chat.solr.SolrSender;
 
 import java.util.concurrent.BlockingQueue;
 
-public final class MessageSender implements Runnable {
+public class MessageSender implements Runnable {
 
     private final SolrSender solrSender = new SolrSender();
 
-    private final BlockingQueue<ChatMessage> queue;
+    private BlockingQueue<ChatMessage> queue;
     private boolean stop;
+
+    void setQueue(final BlockingQueue<ChatMessage> queue) {
+        this.queue = queue;
+    }
+
+    MessageSender() {
+    }
 
     public MessageSender(final BlockingQueue<ChatMessage> queue) {
         this.queue = queue;
@@ -33,7 +40,7 @@ public final class MessageSender implements Runnable {
         return queue.take();
     }
 
-    private void send(final ChatMessage chatMessage){
+    void send(final ChatMessage chatMessage){
         solrSender.send(chatMessage);
     }
 }
