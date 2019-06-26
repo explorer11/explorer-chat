@@ -1,7 +1,7 @@
 package org.explorer.chat.server;
 
 import org.explorer.chat.common.ChatMessageReader;
-import org.explorer.chat.server.collect.MessageCollector;
+import org.explorer.chat.server.collect.MessageIndexing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,12 +18,12 @@ public class ClientSocketManager implements Callable<String> {
 	private static Logger logger = LoggerFactory.getLogger(ClientSocketManager.class);
 	
 	private final Socket socket;
-	private final MessageCollector messageCollector;
+	private final MessageIndexing messageIndexing;
 
-	ClientSocketManager(Socket socket, final MessageCollector messageCollector) {
+	ClientSocketManager(Socket socket, final MessageIndexing messageIndexing) {
 		super();
 		this.socket = socket;
-		this.messageCollector = messageCollector;
+		this.messageIndexing = messageIndexing;
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class ClientSocketManager implements Callable<String> {
 				
 			clientAuthenticationStrategy.getClientName().ifPresentOrElse(clientName->
 			new ChatMessageReader().read(inputStream, outputStream, 
-					new ClientConnectionStrategy(clientName, messageCollector)),
+					new ClientConnectionStrategy(clientName, messageIndexing)),
 			()->IOUtils.closeQuietly(socket));
 					
 		} catch (IOException e) {

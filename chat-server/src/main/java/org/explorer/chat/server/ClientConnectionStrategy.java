@@ -3,19 +3,19 @@ package org.explorer.chat.server;
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.ChatMessageReaderStrategy;
 import org.explorer.chat.common.ChatMessageType;
-import org.explorer.chat.server.collect.MessageCollector;
+import org.explorer.chat.server.collect.MessageIndexing;
 
 import java.io.OutputStream;
 
 public class ClientConnectionStrategy implements ChatMessageReaderStrategy {
 	
 	private final String clientName;
-	private final MessageCollector messageCollector;
+	private final MessageIndexing messageIndexing;
 
-	ClientConnectionStrategy(String clientName, final MessageCollector messageCollector) {
+	ClientConnectionStrategy(String clientName, final MessageIndexing messageIndexing) {
 		super();
 		this.clientName = clientName;
-		this.messageCollector = messageCollector;
+		this.messageIndexing = messageIndexing;
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class ClientConnectionStrategy implements ChatMessageReaderStrategy {
 				.build();
 		ChatOutputWriter.INSTANCE.writeToAll(builtChatMessage);
 
-		messageCollector.write(builtChatMessage);
+		messageIndexing.write(builtChatMessage);
 
 		return false;
 	}

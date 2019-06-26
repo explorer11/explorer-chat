@@ -27,7 +27,7 @@ public class MessageIndexing {
         collectorExecutorService.submit(messageSender);
     }
 
-    void write(final ChatMessage chatMessage){
+    public void write(final ChatMessage chatMessage){
         messageCollector.write(chatMessage);
     }
 }

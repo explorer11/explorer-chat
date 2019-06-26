@@ -5,7 +5,7 @@ import org.explorer.chat.solr.SolrSender;
 
 import java.util.concurrent.BlockingQueue;
 
-public class MessageSender implements Runnable {
+class MessageSender implements Runnable {
 
     private final SolrSender solrSender = new SolrSender();
 
@@ -19,7 +19,7 @@ public class MessageSender implements Runnable {
     MessageSender() {
     }
 
-    public MessageSender(final BlockingQueue<ChatMessage> queue) {
+    MessageSender(final BlockingQueue<ChatMessage> queue) {
         this.queue = queue;
     }
 
