@@ -19,8 +19,7 @@ public class ClientLaunchFrame extends JFrame implements IChatClientFrame {
 	
 	private JButton sendButton;
 	private JTextComponent serverIPComponent;
-	private JTextComponent portComponent;
-	
+
 	public ClientLaunchFrame() {
 		super("Chat Client Launch");
 		
@@ -45,14 +44,6 @@ public class ClientLaunchFrame extends JFrame implements IChatClientFrame {
 		this.serverIPComponent = jTextField;
 		panel.add(jTextField);
 		
-		JLabel portLabel = new JLabel("connection port : ");
-		panel.add(portLabel);
-		
-		JTextField portTextField = new JTextField("");
-		portTextField.setMaximumSize(new Dimension(400, 20));
-		this.portComponent = portTextField;
-		panel.add(portTextField);
-		
 		JButton button = new JButton("Envoyer");
 		button.setPreferredSize(new Dimension(100, 20));
 		this.sendButton = button;
@@ -69,10 +60,6 @@ public class ClientLaunchFrame extends JFrame implements IChatClientFrame {
 	@Override
 	public JTextComponent getTextComponent() {
 		return serverIPComponent;
-	}
-	
-	public JTextComponent getPortComponent() {
-		return portComponent;
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package org.explorer.chat.client.command;
 import org.explorer.chat.client.ClientArgs;
 import org.explorer.chat.client.presentation.ClientLaunchFrame;
 import org.explorer.chat.client.presentation.IChatClientFrame;
+import org.explorer.chat.common.ServerPort;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,12 +49,9 @@ public class ClientLaunchCommand implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		String serverIP = clientLaunchFrame.getTextComponent().getText();
-		String localPortStr = clientLaunchFrame.getPortComponent().getText();
-		
-		final Integer localPort = Integer.valueOf(localPortStr);
+		final String serverIP = clientLaunchFrame.getTextComponent().getText();
 
-		clientArgs = new ClientArgs(serverIP, localPort);
+		clientArgs = new ClientArgs(serverIP);
 		
 		clientLaunchFrame.setVisible(false);
 		clientLaunchFrame.dispose();
@@ -73,30 +71,43 @@ public class ClientLaunchCommand implements ActionListener {
 		System.out.println("end::get client input");
 		
 		if(this.clientArgs != null){
-			System.out.println("end::run with server IP : " + clientArgs.getServerIP() + " and local port " + clientArgs.getLocalPort());
+			System.out.println("end::run with server IP : " + clientArgs.getServerIP());
 			connectToServer();
 		}
 	}
 	
 	private void connectToServer() throws InterruptedException{
-		
-		try (
-			Socket withServerSocket = new Socket(InetAddress.getByName(this.clientArgs.getServerIP()), 60000, InetAddress.getLocalHost(), this.clientArgs.getLocalPort());
-				
-			OutputStream outputStream = withServerSocket.getOutputStream();
-			InputStream inputStream = withServerSocket.getInputStream()
-		) {
-			
-			ChatActionCommand chatActionCommand = new ChatActionCommand(inputStream, outputStream);			
-			chatActionCommand.start();
-			
-			System.out.println("ClientLaunchCommand::connectToServer:end");
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally{
-			System.out.println("connectToServer::finally");
-		}
+
+        ChatActionCommand chatActionCommand = null;
+        int localPort = 4444;
+        while(chatActionCommand == null && localPort < 5000) {
+            try (
+                    Socket withServerSocket = new Socket(InetAddress.getByName(this.clientArgs.getServerIP()),
+                            ServerPort.PORT,
+                            InetAddress.getLocalHost(), localPort);
+
+                    OutputStream outputStream = withServerSocket.getOutputStream();
+                    InputStream inputStream = withServerSocket.getInputStream()
+            ) {
+
+                System.out.println("ClientLaunchCommand::connectToServer : client local port is " + localPort);
+
+                chatActionCommand = new ChatActionCommand(inputStream, outputStream);
+                chatActionCommand.start();
+
+                System.out.println("ClientLaunchCommand::connectToServer:end with client local port " + localPort);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                localPort++;
+            } finally {
+                System.out.println("connectToServer::finally");
+            }
+        }
+
+        if(chatActionCommand == null) {
+            System.out.println("ClientLaunchCommand::connectToServer : fail to connect");
+        }
 	}
 	
 	private void closeFrame() {
