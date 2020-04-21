@@ -22,7 +22,7 @@ public class ChatActionCommand extends ClientLaunchCommand {
 	private final InputStream fromServerInputStream;
 	private final OutputStream toServerOutputStream;
 	
-	private ExecutorService messageReaderExecutorService = Executors.newFixedThreadPool(1);
+	private final ExecutorService messageReaderExecutorService = Executors.newFixedThreadPool(1);
 	
 	ChatActionCommand(InputStream inputStream, OutputStream outputStream) {
 		super();

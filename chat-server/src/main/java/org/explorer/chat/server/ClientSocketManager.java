@@ -15,7 +15,7 @@ import org.apache.commons.io.IOUtils;
 
 public class ClientSocketManager implements Callable<String> {
 	
-	private static Logger logger = LoggerFactory.getLogger(ClientSocketManager.class);
+	private static final Logger logger = LoggerFactory.getLogger(ClientSocketManager.class);
 	
 	private final Socket socket;
 	private final MessageIndexing messageIndexing;

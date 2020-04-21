@@ -37,7 +37,7 @@ public class ChatClientFrame extends JFrame implements IChatClientFrame {
 	}
 	
 	private JPanel buildJPanel(){
-		JPanel panel = new JPanel(/*new BorderLayout()*/);
+		JPanel panel = new JPanel();
 		panel.setLayout(defineGroupLayout(panel));
 		return panel;
 	}

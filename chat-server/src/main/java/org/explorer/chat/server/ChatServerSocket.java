@@ -11,14 +11,13 @@ import org.slf4j.LoggerFactory;
 public enum ChatServerSocket {
 	
 	INSTANCE;
-	
-	private final Logger logger = LoggerFactory.getLogger(ChatServerSocket.class);
-	
-	ChatServerSocket() {
+
+    ChatServerSocket() {
 		try {
 			serverSocket = new ServerSocket(ServerPort.PORT, max_pending_connections_allowed, InetAddress.getLocalHost());
 		} catch (IOException e) {
-			logger.error("", e);
+            final Logger logger = LoggerFactory.getLogger(ChatServerSocket.class);
+            logger.error("", e);
 			throw new RuntimeException("unable to start server socket");
 		}
 	}

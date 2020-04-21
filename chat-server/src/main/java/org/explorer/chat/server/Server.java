@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 
 public class Server {
 	
-	private static Logger logger = LoggerFactory.getLogger(Server.class);
+	private static final Logger logger = LoggerFactory.getLogger(Server.class);
 	
 	public static void main(String[] args) {
 
