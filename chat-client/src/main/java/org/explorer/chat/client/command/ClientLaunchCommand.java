@@ -25,15 +25,12 @@ public class ClientLaunchCommand implements ActionListener {
 	
 	private ClientArgs clientArgs = null;
 	
-	IChatClientFrame activeFrame;
-	
 	protected void openFrame(){
 		clientLaunchFrame = new ClientLaunchFrame();
 		prepareClientFrameListening(clientLaunchFrame);
 	}
 	
 	void prepareClientFrameListening(IChatClientFrame aClientFrame){
-		activeFrame = aClientFrame;
 		aClientFrame.getSendButton().addActionListener(this);
 		aClientFrame.getRootPane().setDefaultButton(aClientFrame.getSendButton());
 		

@@ -3,6 +3,7 @@ package org.explorer.chat.client.command;
 import org.explorer.chat.client.ServerMessageReader;
 import org.explorer.chat.client.presentation.ChatClientFrame;
 import org.explorer.chat.client.presentation.ClientConnectionFrame;
+import org.explorer.chat.client.presentation.IChatClientFrame;
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.UsersList;
 
@@ -18,6 +19,7 @@ public class ChatActionCommand extends ClientLaunchCommand {
 	
 	private ChatClientFrame clientFrame;
 	private ClientConnectionFrame clientConnectionFrame;
+	private IChatClientFrame activeFrame;
 	
 	private final InputStream fromServerInputStream;
 	private final OutputStream toServerOutputStream;
@@ -32,13 +34,15 @@ public class ChatActionCommand extends ClientLaunchCommand {
 
 	private void openClientFrame(){
 		clientFrame = new ChatClientFrame();
-		prepareClientFrameListening(clientFrame);
+        activeFrame = clientFrame;
+		super.prepareClientFrameListening(clientFrame);
 	}
 	
 	@Override
 	protected void openFrame(){
 		clientConnectionFrame = new ClientConnectionFrame();
-		prepareClientFrameListening(clientConnectionFrame);
+		activeFrame = clientConnectionFrame;
+        super.prepareClientFrameListening(clientConnectionFrame);
 	}
 	
 	private void closeConnectionFrame(){
