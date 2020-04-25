@@ -15,34 +15,30 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 public class ClientLaunchCommand implements ActionListener {
 
 	private ClientLaunchFrame clientLaunchFrame;
-	private BlockingQueue<String> queue;
-	
+	private volatile boolean run = true;
+
 	private ClientArgs clientArgs = null;
 	
-	protected void openFrame(){
+	private void openFrame(){
 		clientLaunchFrame = new ClientLaunchFrame();
-		prepareClientFrameListening(clientLaunchFrame);
+        clientLaunchFrame.prepareButtons(this);
+        listenClose(clientLaunchFrame);
 	}
-	
-	void prepareClientFrameListening(IChatClientFrame aClientFrame){
-		aClientFrame.getSendButton().addActionListener(this);
-		aClientFrame.getRootPane().setDefaultButton(aClientFrame.getSendButton());
-		
-		WindowListener windowListener = new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e){
-				closeFrame();
-			}
-		};
-		
-		aClientFrame.addWindowListener(windowListener);
-	}
+
+    private void listenClose(IChatClientFrame clientFrame){
+        WindowListener windowListener = new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e){
+                run = false;
+            }
+        };
+
+        clientFrame.addWindowListener(windowListener);
+    }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -52,28 +48,29 @@ public class ClientLaunchCommand implements ActionListener {
 		
 		clientLaunchFrame.setVisible(false);
 		clientLaunchFrame.dispose();
-		closeFrame();
+        run = false;
 	}
 	
-	public void start() throws InterruptedException {
-		this.queue = new ArrayBlockingQueue<>(1);
+	public void start() {
 		System.out.println("start::wait client input");
 		this.openFrame();
 		// wait until the client has filled the inputs
-		this.queue.take();
-		this.end();
+        while (run) {
+            Thread.onSpinWait();
+        }
+        this.stop();
 	}
 
-	protected void end() throws InterruptedException {
-		System.out.println("end::get client input");
+	private void stop() {
+		System.out.println("" + this.getClass().getName() + ":stop::get client input");
 		
 		if(this.clientArgs != null){
-			System.out.println("end::run with server IP : " + clientArgs.getServerIP());
+			System.out.println("" + this.getClass().getName() + ":stop::run with server IP : " + clientArgs.getServerIP());
 			connectToServer();
 		}
 	}
 	
-	private void connectToServer() throws InterruptedException{
+	private void connectToServer() {
 
         ChatActionCommand chatActionCommand = null;
         int localPort = 4444;
@@ -105,13 +102,5 @@ public class ClientLaunchCommand implements ActionListener {
         if(chatActionCommand == null) {
             System.out.println("ClientLaunchCommand::connectToServer : fail to connect");
         }
-	}
-	
-	private void closeFrame() {
-		try {
-			queue.put("");
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
 	}
 }

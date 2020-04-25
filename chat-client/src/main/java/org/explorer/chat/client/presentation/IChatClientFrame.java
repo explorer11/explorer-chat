@@ -1,5 +1,6 @@
 package org.explorer.chat.client.presentation;
 
+import java.awt.event.ActionListener;
 import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
@@ -15,6 +16,11 @@ public interface IChatClientFrame {
 	JButton getSendButton();
 	
 	JTextComponent getTextComponent();
+
+    default void prepareButtons(final ActionListener actionListener){
+        getSendButton().addActionListener(actionListener);
+        getRootPane().setDefaultButton(this.getSendButton());
+    }
 	
 	ChatMessage chatMessage();
 	
