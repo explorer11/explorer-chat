@@ -9,9 +9,6 @@ import org.explorer.chat.common.UsersList;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
@@ -19,9 +16,10 @@ import java.io.OutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ChatActionCommand implements ActionListener {
+public class ChatActionCommand implements ActionListener, NonStopCommand {
 
     private volatile boolean run = true;
+    private final WindowListenerCreation windowListenerCreation = new WindowListenerCreation();
 
 	private ChatClientFrame clientFrame;
 	private ClientConnectionFrame clientConnectionFrame;
@@ -42,25 +40,15 @@ public class ChatActionCommand implements ActionListener {
 		clientFrame = new ChatClientFrame();
         activeFrame = clientFrame;
         clientFrame.prepareButtons(this);
-        listenClose(clientFrame);
+        windowListenerCreation.define(this, clientFrame);
 	}
 
 	private void openFrame(){
 		clientConnectionFrame = new ClientConnectionFrame();
 		activeFrame = clientConnectionFrame;
         clientConnectionFrame.prepareButtons(this);
-        listenClose(clientConnectionFrame);
+        windowListenerCreation.define(this, clientConnectionFrame);
 	}
-
-    private void listenClose(IChatClientFrame clientFrame){
-        WindowListener windowListener = new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e){
-                run = false;
-            }
-        };
-        clientFrame.addWindowListener(windowListener);
-    }
 
     private void closeConnectionFrame(){
 		clientConnectionFrame.setVisible(false);
@@ -81,7 +69,12 @@ public class ChatActionCommand implements ActionListener {
 		}
 	}
 
-	public void start() {
+    @Override
+    public void triggerStop() {
+        run = false;
+    }
+
+    public void start() {
 		ServerMessageReader serverMessageReader= new ServerMessageReader(
 				this.fromServerInputStream, this);
 		this.messageReaderExecutorService.submit(serverMessageReader);

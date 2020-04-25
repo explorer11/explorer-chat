@@ -2,43 +2,29 @@ package org.explorer.chat.client.command;
 
 import org.explorer.chat.client.ClientArgs;
 import org.explorer.chat.client.presentation.ClientLaunchFrame;
-import org.explorer.chat.client.presentation.IChatClientFrame;
 import org.explorer.chat.common.ServerPort;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
-public class ClientLaunchCommand implements ActionListener {
+public class ClientLaunchCommand implements ActionListener, NonStopCommand {
 
-	private ClientLaunchFrame clientLaunchFrame;
 	private volatile boolean run = true;
+    private final WindowListenerCreation windowListenerCreation = new WindowListenerCreation();
 
-	private ClientArgs clientArgs = null;
+    private ClientLaunchFrame clientLaunchFrame;
+    private ClientArgs clientArgs = null;
 	
 	private void openFrame(){
 		clientLaunchFrame = new ClientLaunchFrame();
         clientLaunchFrame.prepareButtons(this);
-        listenClose(clientLaunchFrame);
+        windowListenerCreation.define(this, clientLaunchFrame);
 	}
-
-    private void listenClose(IChatClientFrame clientFrame){
-        WindowListener windowListener = new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e){
-                run = false;
-            }
-        };
-
-        clientFrame.addWindowListener(windowListener);
-    }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -48,10 +34,15 @@ public class ClientLaunchCommand implements ActionListener {
 		
 		clientLaunchFrame.setVisible(false);
 		clientLaunchFrame.dispose();
-        run = false;
+        triggerStop();
 	}
-	
-	public void start() {
+
+    @Override
+    public void triggerStop() {
+        run = false;
+    }
+
+    public void start() {
 		System.out.println("start::wait client input");
 		this.openFrame();
 		// wait until the client has filled the inputs
