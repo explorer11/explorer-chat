@@ -4,10 +4,10 @@ import org.explorer.chat.client.command.ClientLaunchCommand;
 
 public class Client {
 	
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) {
 		
-		ClientLaunchCommand clientLaunchCommand = new ClientLaunchCommand();
-		clientLaunchCommand.start();
+		final ClientLaunchCommand clientLaunchCommand = new ClientLaunchCommand();
+		clientLaunchCommand.run();
 		
 		System.out.println("Client::main:finished");
 	}

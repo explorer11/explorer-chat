@@ -16,10 +16,11 @@ import java.io.OutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ChatActionCommand implements ActionListener, NonStopCommand {
+public class ChatActionCommand implements ActionListener, NonStopCommand, RunCommand {
 
-    private volatile boolean run = true;
+    private volatile boolean mustRun = true;
     private final WindowListenerCreation windowListenerCreation = new WindowListenerCreation();
+    private final CommandRunner commandRunner = new CommandRunner(this);
 
 	private ChatClientFrame clientFrame;
 	private ClientConnectionFrame clientConnectionFrame;
@@ -43,7 +44,8 @@ public class ChatActionCommand implements ActionListener, NonStopCommand {
         windowListenerCreation.define(this, clientFrame);
 	}
 
-	private void openFrame(){
+	@Override
+	public void openFrame(){
 		clientConnectionFrame = new ClientConnectionFrame();
 		activeFrame = clientConnectionFrame;
         clientConnectionFrame.prepareButtons(this);
@@ -56,39 +58,41 @@ public class ChatActionCommand implements ActionListener, NonStopCommand {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		ChatMessage chatMessage = activeFrame.chatMessage();
+	public void actionPerformed(final ActionEvent actionEvent) {
+		final ChatMessage chatMessage = activeFrame.chatMessage();
 		activeFrame.getTextComponent().setText("");
 		System.out.println("Command::actionPerformed chatMessage " + chatMessage);
 		
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(toServerOutputStream);
 			out.writeObject(chatMessage);
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
     @Override
     public void triggerStop() {
-        run = false;
+        mustRun = false;
     }
 
-    public void start() {
-		ServerMessageReader serverMessageReader= new ServerMessageReader(
+    @Override
+    public void run() {
+		final ServerMessageReader serverMessageReader= new ServerMessageReader(
 				this.fromServerInputStream, this);
 		this.messageReaderExecutorService.submit(serverMessageReader);
-        System.out.println(this.getClass().getName() + ":start::wait client input");
-        this.openFrame();
-        while (run) {
-            Thread.onSpinWait();
-        }
-        this.stop();
+        commandRunner.run();
 	}
-	
-	private void stop() {
+
+    @Override
+    public boolean mustRun() {
+        return mustRun;
+    }
+
+    @Override
+    public void after() {
 		this.messageReaderExecutorService.shutdownNow();
-		System.out.println("ChatActionCommand::stop");
+		System.out.println("ChatActionCommand::after");
 	}
 	
 	public void performServerMessage(ChatMessage chatMessage) {

@@ -12,22 +12,24 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
-public class ClientLaunchCommand implements ActionListener, NonStopCommand {
+public class ClientLaunchCommand implements ActionListener, NonStopCommand, RunCommand {
 
-	private volatile boolean run = true;
+	private volatile boolean mustRun = true;
     private final WindowListenerCreation windowListenerCreation = new WindowListenerCreation();
+    private final CommandRunner commandRunner = new CommandRunner(this);
 
     private ClientLaunchFrame clientLaunchFrame;
     private ClientArgs clientArgs = null;
 	
-	private void openFrame(){
+	@Override
+    public void openFrame(){
 		clientLaunchFrame = new ClientLaunchFrame();
         clientLaunchFrame.prepareButtons(this);
         windowListenerCreation.define(this, clientLaunchFrame);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent actionEvent) {
 		final String serverIP = clientLaunchFrame.getTextComponent().getText();
 
 		clientArgs = new ClientArgs(serverIP);
@@ -39,24 +41,25 @@ public class ClientLaunchCommand implements ActionListener, NonStopCommand {
 
     @Override
     public void triggerStop() {
-        run = false;
+        mustRun = false;
     }
 
-    public void start() {
-		System.out.println("start::wait client input");
-		this.openFrame();
-		// wait until the client has filled the inputs
-        while (run) {
-            Thread.onSpinWait();
-        }
-        this.stop();
-	}
+    @Override
+    public boolean mustRun() {
+        return mustRun;
+    }
 
-	private void stop() {
-		System.out.println("" + this.getClass().getName() + ":stop::get client input");
+    @Override
+    public void run() {
+        commandRunner.run();
+    }
+
+    @Override
+	public void after() {
+		System.out.println("" + this.getClass().getName() + ":after::get client input");
 		
 		if(this.clientArgs != null){
-			System.out.println("" + this.getClass().getName() + ":stop::run with server IP : " + clientArgs.getServerIP());
+			System.out.println("" + this.getClass().getName() + ":after::run with server IP : " + clientArgs.getServerIP());
 			connectToServer();
 		}
 	}
@@ -78,7 +81,7 @@ public class ClientLaunchCommand implements ActionListener, NonStopCommand {
                 System.out.println("ClientLaunchCommand::connectToServer : client local port is " + localPort);
 
                 chatActionCommand = new ChatActionCommand(inputStream, outputStream);
-                chatActionCommand.start();
+                chatActionCommand.run();
 
                 System.out.println("ClientLaunchCommand::connectToServer:end with client local port " + localPort);
 
