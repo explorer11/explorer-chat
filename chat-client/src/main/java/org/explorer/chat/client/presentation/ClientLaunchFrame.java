@@ -13,7 +13,7 @@ import javax.swing.text.JTextComponent;
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.ChatMessageType;
 
-public class ClientLaunchFrame extends JFrame implements IChatClientFrame {
+public class ClientLaunchFrame extends JFrame implements ChatClientFrame {
 
 	private static final long serialVersionUID = -6123304171671691527L;
 	

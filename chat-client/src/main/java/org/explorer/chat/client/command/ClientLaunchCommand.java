@@ -60,11 +60,11 @@ public class ClientLaunchCommand implements ActionListener, NonStopCommand, RunC
 		
 		if(this.clientArgs != null){
 			System.out.println("" + this.getClass().getName() + ":after::run with server IP : " + clientArgs.getServerIP());
-			connectToServer();
+			serverConnection();
 		}
 	}
 	
-	private void connectToServer() {
+	private void serverConnection() {
 
         ChatActionCommand chatActionCommand = null;
         int localPort = 4444;
@@ -78,23 +78,23 @@ public class ClientLaunchCommand implements ActionListener, NonStopCommand, RunC
                     InputStream inputStream = withServerSocket.getInputStream()
             ) {
 
-                System.out.println("ClientLaunchCommand::connectToServer : client local port is " + localPort);
+                System.out.println("ClientLaunchCommand::serverConnection : client local port is " + localPort);
 
                 chatActionCommand = new ChatActionCommand(inputStream, outputStream);
                 chatActionCommand.run();
 
-                System.out.println("ClientLaunchCommand::connectToServer:end with client local port " + localPort);
+                System.out.println("ClientLaunchCommand::serverConnection:end with client local port " + localPort);
 
             } catch (IOException e) {
                 e.printStackTrace();
                 localPort++;
             } finally {
-                System.out.println("connectToServer::finally");
+                System.out.println("serverConnection::finally");
             }
         }
 
         if(chatActionCommand == null) {
-            System.out.println("ClientLaunchCommand::connectToServer : fail to connect");
+            System.out.println("ClientLaunchCommand::serverConnection : fail to connect");
         }
 	}
 }

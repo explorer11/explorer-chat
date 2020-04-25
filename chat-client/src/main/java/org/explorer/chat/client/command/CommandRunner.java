@@ -9,7 +9,7 @@ class CommandRunner {
     }
 
     void run() {
-        System.out.println(this.getClass().getName() + ":run::wait client input");
+        System.out.println(runCommand.getClass().getName() + ":run::wait client input");
         runCommand.openFrame();
         while (runCommand.mustRun()) {
             Thread.onSpinWait();

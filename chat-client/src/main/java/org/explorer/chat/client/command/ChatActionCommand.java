@@ -1,9 +1,9 @@
 package org.explorer.chat.client.command;
 
 import org.explorer.chat.client.ServerMessageReader;
-import org.explorer.chat.client.presentation.ChatClientFrame;
+import org.explorer.chat.client.presentation.ChatMessagesFrame;
 import org.explorer.chat.client.presentation.ClientConnectionFrame;
-import org.explorer.chat.client.presentation.IChatClientFrame;
+import org.explorer.chat.client.presentation.ChatClientFrame;
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.UsersList;
 
@@ -22,9 +22,9 @@ public class ChatActionCommand implements ActionListener, NonStopCommand, RunCom
     private final WindowListenerCreation windowListenerCreation = new WindowListenerCreation();
     private final CommandRunner commandRunner = new CommandRunner(this);
 
-	private ChatClientFrame clientFrame;
+	private ChatMessagesFrame chatMessagesFrame;
 	private ClientConnectionFrame clientConnectionFrame;
-	private IChatClientFrame activeFrame;
+	private ChatClientFrame activeFrame;
 	
 	private final InputStream fromServerInputStream;
 	private final OutputStream toServerOutputStream;
@@ -38,10 +38,10 @@ public class ChatActionCommand implements ActionListener, NonStopCommand, RunCom
 	}
 
 	private void openClientFrame(){
-		clientFrame = new ChatClientFrame();
-        activeFrame = clientFrame;
-        clientFrame.prepareButtons(this);
-        windowListenerCreation.define(this, clientFrame);
+		chatMessagesFrame = new ChatMessagesFrame();
+        activeFrame = chatMessagesFrame;
+        chatMessagesFrame.prepareButtons(this);
+        windowListenerCreation.define(this, chatMessagesFrame);
 	}
 
 	@Override
@@ -108,19 +108,19 @@ public class ChatActionCommand implements ActionListener, NonStopCommand, RunCom
 		case LIST :
 			String usersListAsText = new UsersList().getUsersListAsText(
 					chatMessage.getMessage());
-			clientFrame.getUsersTextArea().setText(usersListAsText);
+			chatMessagesFrame.getUsersTextArea().setText(usersListAsText);
 			break;
 		case LEAVING:
 			String messageDepart = chatMessage.getMessage() + " est parti";
-			clientFrame.getMessagesTextArea().append(messageDepart + "\n");
+			chatMessagesFrame.getMessagesTextArea().append(messageDepart + "\n");
 			break;
 		case ARRIVAL :
 			String messageArrivee = chatMessage.getMessage() + " arrive";
-			clientFrame.getMessagesTextArea().append(messageArrivee + "\n");
+			chatMessagesFrame.getMessagesTextArea().append(messageArrivee + "\n");
 			break;
 		case SENTENCE :
 			String messagePhrase = chatMessage.getFromUserMessage() + " : " + chatMessage.getMessage();
-			clientFrame.getMessagesTextArea().append(messagePhrase + "\n");
+			chatMessagesFrame.getMessagesTextArea().append(messagePhrase + "\n");
 			break;
 		default :
 		    break;
