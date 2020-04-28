@@ -19,4 +19,16 @@ class Users {
     Collection<String> list() {
         return names;
     }
+
+    boolean get(final String user) {
+        return names.contains(user);
+    }
+
+    /**
+     * Returns true if the user does not exist. In this case, it also creates the user.
+     * Returns false if the user already exists.
+     */
+    boolean createNewUser(final String user) {
+        return !names.contains(user);
+    }
 }

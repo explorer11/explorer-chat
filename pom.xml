@@ -80,18 +80,6 @@
                 </configuration>
             </plugin>
         </plugins>
-
-        <testResources>
-            <testResource>
-                <directory>src/test/java</directory>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
-                <includes>
-                    <include>**</include>
-                </includes>
-            </testResource>
-        </testResources>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
