@@ -87,6 +87,16 @@ public class UsersTest {
     }
 
     @Test
+    public void shouldCreateUserWhenFileIsEmptyAndSavesToFile() throws IOException {
+        final String path = temporaryFolder.newFile().getAbsolutePath();
+        final Users users = new Users(path);
+        assertThat(users.createNewUser("foo")).isTrue();
+
+        final Users usersAfterCreation = new Users(path);
+        assertThat(usersAfterCreation.createNewUser("foo")).isFalse();
+    }
+
+    @Test
     public void shouldNotCreateUserWhenAlreadyExistingInSingleList() throws IOException {
         final File file = temporaryFolder.newFile();
         final String foo = "foo";
@@ -102,6 +112,22 @@ public class UsersTest {
         new FileOutputStream(file).write(foo.getBytes());
         final Users users = new Users(file.getAbsolutePath());
         assertThat(users.createNewUser("bar")).isTrue();
+    }
+
+    @Test
+    public void shouldCreateUserNotExistingInSingleListAndWriteToFile() throws IOException {
+        final File file = temporaryFolder.newFile();
+        final String alreadyExisting = "foo";
+        new FileOutputStream(file).write(alreadyExisting.getBytes());
+
+        final String path = file.getAbsolutePath();
+        final Users users = new Users(path);
+        final String newUser = "bar";
+        assertThat(users.createNewUser(newUser)).isTrue();
+
+        final Users usersAfterCreation = new Users(path);
+        assertThat(usersAfterCreation.createNewUser(newUser)).isFalse();
+        assertThat(usersAfterCreation.createNewUser(alreadyExisting)).isFalse();
     }
 
     @Test
@@ -121,5 +147,22 @@ public class UsersTest {
         new FileOutputStream(file).write(foo_bar.getBytes());
         final Users users = new Users(file.getAbsolutePath());
         assertThat(users.createNewUser("bob")).isTrue();
+    }
+
+    @Test
+    public void shouldCreateUserNotExistingInMultipleListAndWriteToFile() throws IOException {
+        final File file = temporaryFolder.newFile();
+        final String foo_bar = String.format("foo%nbar");
+        new FileOutputStream(file).write(foo_bar.getBytes());
+
+        final String path = file.getAbsolutePath();
+        final Users users = new Users(path);
+        final String newUser = "bob";
+        assertThat(users.createNewUser(newUser)).isTrue();
+
+        final Users usersAfterCreation = new Users(path);
+        assertThat(usersAfterCreation.createNewUser(newUser)).isFalse();
+        assertThat(usersAfterCreation.createNewUser("foo")).isFalse();
+        assertThat(usersAfterCreation.createNewUser("bar")).isFalse();
     }
 }
