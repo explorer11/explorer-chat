@@ -8,12 +8,12 @@ import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.HashSet;
 
-class Users {
+public class Users {
 
     private final Path path;
     private final Collection<String> names = new HashSet<>();
 
-    Users(final String stringPath) throws IOException {
+    public Users(final String stringPath) throws IOException {
         this.path = Paths.get(stringPath);
         Files.lines(path).forEach(names::add);
     }
@@ -33,7 +33,7 @@ class Users {
      * @throws IOException if an exception occurs when writing to file. In this case,
      * the user isn't created in memory.
      */
-    boolean createNewUser(final String user) throws IOException {
+    public boolean createNewUser(final String user) throws IOException {
         if(!names.contains(user)) {
             Files.write(path, (System.getProperty("line.separator") + user).getBytes(),
                     StandardOpenOption.APPEND);
