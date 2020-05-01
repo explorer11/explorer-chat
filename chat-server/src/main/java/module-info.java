@@ -4,4 +4,5 @@ module explorer.chat.server{
 	requires slf4j.api;
     requires explorer.chat;
     requires explorer.chat.solr;
+    requires explorer.chat.users;
 }
