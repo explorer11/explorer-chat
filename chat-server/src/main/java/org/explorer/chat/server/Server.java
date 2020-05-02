@@ -1,6 +1,7 @@
 package org.explorer.chat.server;
 
 import org.explorer.chat.server.collect.MessageIndexing;
+import org.explorer.chat.server.users.ConnectedUsers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,15 +15,23 @@ public class Server {
 	
 	public static void main(String[] args) {
 
-		final MessageIndexing messageIndexing = new MessageIndexing();
+        final ConnectedUsers connectedUsers;
+        try {
+            connectedUsers = connectedUsers(args);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        final MessageIndexing messageIndexing = new MessageIndexing();
 		messageIndexing.start();
 
 		while(true){
 			try {
 
-				ClientSocketManager clientSocketManager = new ClientSocketManager(
+				final ClientSocketManager clientSocketManager = new ClientSocketManager(
 						ChatServerSocket.INSTANCE.getServerSocket().accept(),
-						messageIndexing);
+						messageIndexing, connectedUsers);
 				
 				ExecutorService executorService = Executors.newSingleThreadExecutor();
 				executorService.submit(clientSocketManager);
@@ -32,5 +41,9 @@ public class Server {
 			}
 		}
 	}
+
+	static ConnectedUsers connectedUsers(final String[] args) throws IOException {
+        return new ConnectedUsers(args[0]);
+    }
 
 }

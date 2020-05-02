@@ -14,7 +14,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-class ConnectedUsers {
+public class ConnectedUsers {
 
 	private final Map<String, OutputStream> objectWriters = new ConcurrentHashMap<>();
 
@@ -24,15 +24,15 @@ class ConnectedUsers {
     private final Lock readLock = reentrantReadWriteLock.readLock();
     private final Lock writeLock = reentrantReadWriteLock.writeLock();
 
-    ConnectedUsers(final String stringPath) throws IOException {
+    public ConnectedUsers(final String stringPath) throws IOException {
         this.users = new Users(stringPath);
     }
 
-    ConnectedUsers(final Users users) {
+    public ConnectedUsers(final Users users) {
         this.users = users;
     }
 
-    boolean add(final String user, final OutputStream p) throws IOException {
+    public boolean add(final String user, final OutputStream p) throws IOException {
 
         writeLock.lock();
 
@@ -49,28 +49,28 @@ class ConnectedUsers {
 
         return true;
 	}
-	
-	void remove(final String user) {
+
+	public void remove(final String user) {
         writeLock.lock();
 		objectWriters.remove(user);
         writeLock.unlock();
 	}
 
-	Collection<OutputStream> getOutputs() {
+	public Collection<OutputStream> getOutputs() {
         readLock.lock();
         final Collection<OutputStream> values = new HashSet<>(objectWriters.values());
         readLock.unlock();
         return values;
     }
-	
-	Set<String> getUsersNames() {
+
+	public Set<String> getUsersNames() {
         readLock.lock();
         final Set<String> keys = new HashSet<>(objectWriters.keySet());
         readLock.unlock();
         return keys;
 	}
-	
-	String getUsersList(){
+
+	public String getUsersList(){
         readLock.lock();
         final Set<String> keys = new HashSet<>(objectWriters.keySet());
         readLock.unlock();

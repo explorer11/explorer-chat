@@ -4,6 +4,7 @@ import java.io.OutputStream;
 
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.ChatMessageType;
+import org.explorer.chat.server.users.ConnectedUsers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,11 +12,12 @@ import org.mockito.Mockito;
 
 public class ClientAuthenticationStrategyTest {
 	
-	private ClientAuthenticationStrategy clientAuthenticationStrategy = new ClientAuthenticationStrategy();
+	private final ClientAuthenticationStrategy clientAuthenticationStrategy =
+            new ClientAuthenticationStrategy(Mockito.mock(ConnectedUsers.class));
 	
 	@Before
 	public void before() {
-		ChatOutputWriter.INSTANCE.getUsersNames().stream().forEach(user -> ChatOutputWriter.INSTANCE.remove(user));
+		ChatOutputWriter.INSTANCE.getUsersNames().forEach(ChatOutputWriter.INSTANCE::remove);
 	}
 	
 	@Test
@@ -27,8 +29,8 @@ public class ClientAuthenticationStrategyTest {
 		boolean result = clientAuthenticationStrategy.apply(chatMessage, Mockito.mock(OutputStream.class));
 		
 		Assert.assertTrue(result);
-		Assert.assertTrue(ChatOutputWriter.INSTANCE.getUsersNames().size() == 1);
-		Assert.assertTrue(userName.equals(ChatOutputWriter.INSTANCE.getUsersNames().iterator().next()));
+        Assert.assertEquals(1, ChatOutputWriter.INSTANCE.getUsersNames().size());
+        Assert.assertEquals(userName, ChatOutputWriter.INSTANCE.getUsersNames().iterator().next());
 	}
 	
 	@Test

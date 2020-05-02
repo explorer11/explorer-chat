@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.ChatMessageReaderStrategy;
 import org.explorer.chat.common.ChatMessageType;
+import org.explorer.chat.server.users.ConnectedUsers;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -11,14 +12,19 @@ import java.util.Optional;
 
 public class ClientAuthenticationStrategy implements ChatMessageReaderStrategy {
 	
-	private String clientName;
+	private final ConnectedUsers connectedUsers;
+    private String clientName;
 
-	@Override
+    public ClientAuthenticationStrategy(final ConnectedUsers connectedUsers) {
+        this.connectedUsers = connectedUsers;
+    }
+
+    @Override
 	public void handleInterruption() {
 	}
 
 	@Override
-	public boolean apply(ChatMessage chatMessage, OutputStream outputStream) {
+	public boolean apply(final ChatMessage chatMessage, final OutputStream outputStream) {
 		String clientName = chatMessage.getFromUserMessage();
 		
 		if(StringUtils.isBlank(clientName) || ChatOutputWriter.INSTANCE.getUsersNames().contains(clientName)){
