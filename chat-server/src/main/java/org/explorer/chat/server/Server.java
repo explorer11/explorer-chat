@@ -12,7 +12,10 @@ import java.util.concurrent.Executors;
 public class Server {
 	
 	private static final Logger logger = LoggerFactory.getLogger(Server.class);
-	
+
+    /**
+     * Expecting the path to the users file in the first argument
+     */
 	public static void main(String[] args) {
 
         final ConnectedUsers connectedUsers;
