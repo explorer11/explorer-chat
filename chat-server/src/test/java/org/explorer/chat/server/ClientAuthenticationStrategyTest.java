@@ -4,13 +4,14 @@ import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.ChatMessageType;
 import org.explorer.chat.server.users.ConnectedUsers;
 import org.explorer.chat.users.Users;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ClientAuthenticationStrategyTest {
 
@@ -33,9 +34,8 @@ public class ClientAuthenticationStrategyTest {
 				.withFromUserMessage(userName).withMessage("").build();
 		boolean result = clientAuthenticationStrategy.apply(chatMessage, Mockito.mock(OutputStream.class));
 		
-		Assert.assertTrue(result);
-        Assert.assertEquals(1, connectedUsers.getUsersNames().size());
-        Assert.assertEquals(userName, connectedUsers.getUsersNames().iterator().next());
+        assertThat(result).isTrue();
+        assertThat(connectedUsers.getUsersNames()).containsExactly(userName);
 	}
 	
 	@Test
@@ -43,7 +43,7 @@ public class ClientAuthenticationStrategyTest {
 		ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder().withMessageType(ChatMessageType.WELCOME)
 				.withFromUserMessage("").withMessage("").build();
 		boolean result = clientAuthenticationStrategy.apply(chatMessage, Mockito.mock(OutputStream.class));
-		Assert.assertFalse(result);
+        assertThat(result).isFalse();
 	}
 	
 	@Test
@@ -58,6 +58,6 @@ public class ClientAuthenticationStrategyTest {
 		boolean secondAuthentication = clientAuthenticationStrategy.apply(
 		        chatMessage, Mockito.mock(OutputStream.class));
 
-		Assert.assertFalse(secondAuthentication);
+        assertThat(secondAuthentication).isFalse();
 	}
 }

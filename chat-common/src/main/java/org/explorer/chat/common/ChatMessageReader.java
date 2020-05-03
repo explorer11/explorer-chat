@@ -27,8 +27,9 @@ public class ChatMessageReader {
 			
 			if(chatMessage != null) {
 				boolean closeConnection = strategy.apply(chatMessage, outputStream);
-				if(closeConnection)
-					connectionOpened = false;
+				if(closeConnection) {
+                    connectionOpened = false;
+                }
 			}
 		}
 	}

@@ -56,10 +56,10 @@ public class ClientLaunchCommand implements ActionListener, NonStopCommand, RunC
 
     @Override
 	public void after() {
-		System.out.println("" + this.getClass().getName() + ":after::get client input");
+		System.out.println("ClientLaunchCommand:after::get client input");
 		
 		if(this.clientArgs != null){
-			System.out.println("" + this.getClass().getName() + ":after::run with server IP : " + clientArgs.getServerIP());
+			System.out.println("ClientLaunchCommand:after::run with server IP : " + clientArgs.getServerIP());
 			serverConnection();
 		}
 	}
