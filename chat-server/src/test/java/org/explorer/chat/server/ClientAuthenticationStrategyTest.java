@@ -1,36 +1,41 @@
 package org.explorer.chat.server;
 
-import java.io.OutputStream;
-
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.ChatMessageType;
 import org.explorer.chat.server.users.ConnectedUsers;
+import org.explorer.chat.users.Users;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 public class ClientAuthenticationStrategyTest {
-	
+
+    private final Users users = Mockito.mock(Users.class);
+    private final ConnectedUsers connectedUsers = new ConnectedUsers(users);
 	private final ClientAuthenticationStrategy clientAuthenticationStrategy =
-            new ClientAuthenticationStrategy(Mockito.mock(ConnectedUsers.class));
+            new ClientAuthenticationStrategy(connectedUsers);
 	
 	@Before
 	public void before() {
-		ChatOutputWriter.INSTANCE.getUsersNames().forEach(ChatOutputWriter.INSTANCE::remove);
+		Mockito.reset(users);
 	}
 	
 	@Test
-	public void right_client_name_is_correctly_handled() {
+	public void right_client_name_is_correctly_handled() throws IOException {
 		final String userName= "mi";
-		
+
+		Mockito.when(users.createNewUser(Mockito.eq(userName))).thenReturn(true);
 		ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder().withMessageType(ChatMessageType.WELCOME)
 				.withFromUserMessage(userName).withMessage("").build();
 		boolean result = clientAuthenticationStrategy.apply(chatMessage, Mockito.mock(OutputStream.class));
 		
 		Assert.assertTrue(result);
-        Assert.assertEquals(1, ChatOutputWriter.INSTANCE.getUsersNames().size());
-        Assert.assertEquals(userName, ChatOutputWriter.INSTANCE.getUsersNames().iterator().next());
+        Assert.assertEquals(1, connectedUsers.getUsersNames().size());
+        Assert.assertEquals(userName, connectedUsers.getUsersNames().iterator().next());
 	}
 	
 	@Test
@@ -42,11 +47,17 @@ public class ClientAuthenticationStrategyTest {
 	}
 	
 	@Test
-	public void an_already_used_client_name_is_incorrect() {
-		ChatOutputWriter.INSTANCE.add("client", Mockito.mock(OutputStream.class));
+	public void an_already_used_client_name_is_incorrect() throws IOException {
+        final String client = "client";
+        Mockito.when(users.createNewUser(Mockito.eq(client))).thenReturn(true);
 		ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder().withMessageType(ChatMessageType.WELCOME)
-				.withFromUserMessage("client").withMessage("").build();
-		boolean result = clientAuthenticationStrategy.apply(chatMessage, Mockito.mock(OutputStream.class));
-		Assert.assertFalse(result);
+				.withFromUserMessage(client).withMessage("").build();
+
+		clientAuthenticationStrategy.apply(chatMessage, Mockito.mock(OutputStream.class));
+
+		boolean secondAuthentication = clientAuthenticationStrategy.apply(
+		        chatMessage, Mockito.mock(OutputStream.class));
+
+		Assert.assertFalse(secondAuthentication);
 	}
 }

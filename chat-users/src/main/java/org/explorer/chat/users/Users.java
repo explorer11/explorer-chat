@@ -35,7 +35,9 @@ public class Users {
      */
     public boolean createNewUser(final String user) throws IOException {
         if(!names.contains(user)) {
-            Files.write(path, (System.getProperty("line.separator") + user).getBytes(),
+            final String newLine = names.size() > 0 ?
+                    System.getProperty("line.separator") + user : user;
+            Files.write(path, newLine.getBytes(),
                     StandardOpenOption.APPEND);
             names.add(user);
             return true;

@@ -1,6 +1,8 @@
 package org.explorer.chat.server.users;
 
+import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.UsersList;
+import org.explorer.chat.server.ChatOutputWriter;
 import org.explorer.chat.users.Users;
 
 import java.io.IOException;
@@ -32,7 +34,9 @@ public class ConnectedUsers {
         this.users = users;
     }
 
-    public boolean add(final String user, final OutputStream p) throws IOException {
+    public boolean add(final String user,
+                       final OutputStream p,
+                       final ChatMessage welcomeMessage) throws IOException {
 
         writeLock.lock();
 
@@ -41,6 +45,7 @@ public class ConnectedUsers {
         }
 
         try {
+            ChatOutputWriter.INSTANCE.write(welcomeMessage, p);
             users.createNewUser(user);
             objectWriters.put(user, p);
         } finally {

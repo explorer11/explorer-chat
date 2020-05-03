@@ -49,7 +49,7 @@ public class ClientSocketManager implements Callable<String> {
 				
 			clientAuthenticationStrategy.getClientName().ifPresentOrElse(clientName->
 			new ChatMessageReader().read(inputStream, outputStream, 
-					new ClientConnectionStrategy(clientName, messageIndexing)),
+					new ClientConnectionStrategy(clientName, messageIndexing, connectedUsers)),
 			()->IOUtils.closeQuietly(socket));
 					
 		} catch (IOException e) {

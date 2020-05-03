@@ -27,34 +27,59 @@ public class ClientAuthenticationStrategy implements ChatMessageReaderStrategy {
 	public boolean apply(final ChatMessage chatMessage, final OutputStream outputStream) {
 		String clientName = chatMessage.getFromUserMessage();
 		
-		if(StringUtils.isBlank(clientName) || ChatOutputWriter.INSTANCE.getUsersNames().contains(clientName)){
-			handleWrongClientName(clientName, outputStream);
-			return false;
-		}
-		
-		try {
-			ChatOutputWriter.INSTANCE.write(new ChatMessage.ChatMessageBuilder()
-					.withMessageType(ChatMessageType.WELCOME)
-					.withFromUserMessage("")
-					.withMessage(clientName)
-					.build(), outputStream);
-		} catch(IOException e) {
-			e.printStackTrace();
-			return false;
-		}
+		final String addResult = addClient(clientName, outputStream);
+		if(!addResult.isEmpty()) {
+		    sendError(addResult, outputStream);
+		    return false;
+        }
 			
 		this.clientName = clientName;
-		ChatOutputWriter.INSTANCE.add(clientName, outputStream);
+
 		ChatOutputWriter.INSTANCE.writeToAll(new ChatMessage.ChatMessageBuilder()
-				.withMessageType(ChatMessageType.ARRIVAL).withFromUserMessage("").withMessage(clientName).build());
-		ChatOutputWriter.INSTANCE.writeToAll(new ChatMessage.ChatMessageBuilder().withMessageType(ChatMessageType.LIST)
-				.withFromUserMessage("").withMessage(ChatOutputWriter.INSTANCE.getUsersList()).build());
+                        .withMessageType(ChatMessageType.ARRIVAL)
+                        .withFromUserMessage("")
+                        .withMessage(clientName)
+                        .build(),
+                connectedUsers.getOutputs());
+
+        final String usersList = connectedUsers.getUsersList();
+        ChatOutputWriter.INSTANCE.writeToAll(new ChatMessage.ChatMessageBuilder()
+                        .withMessageType(ChatMessageType.LIST)
+                        .withFromUserMessage("")
+                        .withMessage(usersList)
+                        .build(),
+                connectedUsers.getOutputs());
 		
 		return true;
 	}
+
+	private String addClient(final String clientName, final OutputStream outputStream) {
+        if(StringUtils.isBlank(clientName)){
+            return "Remplissez le champ";
+        }
+
+        final ChatMessage welcomeMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessageType(ChatMessageType.WELCOME)
+                .withFromUserMessage("")
+                .withMessage(clientName)
+                .build();
+
+        final boolean added;
+        try {
+            added = connectedUsers.add(clientName, outputStream, welcomeMessage);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Une erreur s'est produite";
+        }
+
+        if(!added) {
+            return "Vous avez saisi un nom déjà utilisé";
+        }
+
+        return "";
+    }
 	
-	private void handleWrongClientName(String clientName, OutputStream outputStream) {
-		String message = (StringUtils.isNotBlank(clientName) ? "Vous avez saisi un nom déjà utilisé" : "Remplissez le champ");
+	private void sendError(final String message, final OutputStream outputStream) {
 		try {
 			ChatOutputWriter.INSTANCE.write(new ChatMessage.ChatMessageBuilder()
 					.withMessageType(ChatMessageType.CONNECTION_ERROR)
