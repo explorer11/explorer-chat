@@ -41,6 +41,7 @@ public class ConnectedUsers {
         writeLock.lock();
 
         if(objectWriters.containsKey(user)) {
+            writeLock.unlock();
             return false;
         }
 
