@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.explorer.chat</groupId>
 		<artifactId>chat</artifactId>
-		<version>2.2.0</version>
+		<version>2.3.0-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>chat-server</artifactId>
@@ -29,13 +29,13 @@
 		<dependency>
 			<groupId>org.explorer.chat</groupId>
 			<artifactId>chat-solr</artifactId>
-			<version>2.2.0</version>
+			<version>2.3.0-SNAPSHOT</version>
 		</dependency>
 
         <dependency>
             <groupId>org.explorer.chat</groupId>
             <artifactId>chat-users</artifactId>
-            <version>2.2.0</version>
+            <version>2.3.0-SNAPSHOT</version>
         </dependency>
 
 		<dependency>
