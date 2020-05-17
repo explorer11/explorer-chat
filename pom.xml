@@ -27,6 +27,7 @@
         <module>chat-client</module>
         <module>chat-users</module>
         <module>chat-server</module>
+        <module>chat-data</module>
     </modules>
 
     <dependencies>

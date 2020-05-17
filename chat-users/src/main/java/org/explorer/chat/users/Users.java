@@ -18,10 +18,6 @@ public class Users {
         Files.lines(path).forEach(names::add);
     }
 
-    Collection<String> list() {
-        return names;
-    }
-
     boolean get(final String user) {
         return names.contains(user);
     }

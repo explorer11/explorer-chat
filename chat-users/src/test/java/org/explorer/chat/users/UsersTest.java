@@ -16,31 +16,6 @@ public class UsersTest {
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
-    public void shouldReturnEmptyCollectionIfNoUser() throws IOException {
-        final File file = new File(UsersTest.class.getResource(
-                "/users-lists/empty.txt").getFile());
-        final Users users = new Users(file.getAbsolutePath());
-        assertThat(users.list()).isEmpty();
-    }
-
-    @Test
-    public void shouldReturnSingleUser() throws IOException {
-        final File file = new File(UsersTest.class.getResource(
-                "/users-lists/single-user.txt").getFile());
-        final Users users = new Users(file.getAbsolutePath());
-        assertThat(users.list()).containsExactly("foo");
-    }
-
-    @Test
-    public void shouldReturnMultipleUsers() throws IOException {
-        final File file = new File(UsersTest.class.getResource(
-                "/users-lists/multiple-users.txt").getFile());
-        final Users users = new Users(file.getAbsolutePath());
-        assertThat(users.list()).containsExactlyInAnyOrder(
-                "foo", "bar", "bob", "joe");
-    }
-
-    @Test
     public void shouldNotGetUserInEmptyFile() throws IOException {
         final File file = new File(UsersTest.class.getResource(
                 "/users-lists/empty.txt").getFile());
