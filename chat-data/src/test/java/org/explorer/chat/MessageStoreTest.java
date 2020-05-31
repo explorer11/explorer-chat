@@ -63,4 +63,12 @@ public class MessageStoreTest {
                         Pair.of("first", "hello"),
                         Pair.of("user", "how"));
     }
+
+    @Test
+    public void shouldReadMoreMessagesThanExisting() throws IOException {
+        assertThat(messagesStore.readLast(10)).containsExactly(
+                Pair.of("user", "bonjour"),
+                Pair.of("first", "hello"),
+                Pair.of("user", "how"));
+    }
 }
