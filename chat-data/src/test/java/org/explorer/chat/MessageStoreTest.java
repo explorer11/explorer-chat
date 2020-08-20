@@ -3,7 +3,9 @@ package org.explorer.chat;
 import org.apache.commons.lang3.tuple.Pair;
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.ChatMessageType;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +16,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MessageStoreTest {
 
+    @Rule
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     private final File singleMessageFile = new File(MessageStoreTest.class.getResource(
             "/single_message.txt").getFile());
     private final File messagesFile = new File(MessageStoreTest.class.getResource(
@@ -23,13 +28,60 @@ public class MessageStoreTest {
     private final MessageStore messagesStore = new MessageStore(Paths.get(messagesFile.getAbsolutePath()));
 
     @Test
-    public void shouldSave() {
+    public void shouldSaveToEmptyFile() throws IOException {
+        final MessageStore emptyMessageStore = new MessageStore(Paths.get(temporaryFolder.newFile().getAbsolutePath()));
         final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
                 .withMessageType(ChatMessageType.SENTENCE)
                 .withFromUserMessage("user")
                 .withMessage("bonjour")
                 .build();
-        singleMessageStore.save(chatMessage);
+        emptyMessageStore.save(chatMessage);
+        assertThat(emptyMessageStore.readLast(1)).containsExactly(Pair.of("user", "bonjour"));
+    }
+
+    @Test
+    public void shouldSaveToNotEmptyFile() throws IOException {
+        final MessageStore emptyMessageStore = new MessageStore(Paths.get(temporaryFolder.newFile().getAbsolutePath()));
+        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withFromUserMessage("user")
+                .withMessage("bonjour")
+                .build();
+        emptyMessageStore.save(chatMessage);
+
+        final ChatMessage chatMessage2 = new ChatMessage.ChatMessageBuilder()
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withFromUserMessage("toto")
+                .withMessage("hello")
+                .build();
+        emptyMessageStore.save(chatMessage2);
+
+        assertThat(emptyMessageStore.readLast(2)).containsExactly(
+                Pair.of("toto", "hello"),
+                Pair.of("user", "bonjour"));
+    }
+
+    @Test
+    public void shouldSaveToNotEmptyFileWithSameUser() throws IOException {
+        final MessageStore emptyMessageStore = new MessageStore(Paths.get(temporaryFolder.newFile().getAbsolutePath()));
+        final String user = "user";
+        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withFromUserMessage(user)
+                .withMessage("bonjour")
+                .build();
+        emptyMessageStore.save(chatMessage);
+
+        final ChatMessage chatMessage2 = new ChatMessage.ChatMessageBuilder()
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withFromUserMessage(user)
+                .withMessage("hello")
+                .build();
+        emptyMessageStore.save(chatMessage2);
+
+        assertThat(emptyMessageStore.readLast(2)).containsExactly(
+                Pair.of(user, "hello"),
+                Pair.of(user, "bonjour"));
     }
 
     @Test
