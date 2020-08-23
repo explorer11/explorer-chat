@@ -16,11 +16,11 @@ import java.util.List;
 
 public class MessageStore implements MessageSave {
 
-    private final String SEPARATOR = "|";
+    private static final String SEPARATOR = "|";
 
     private final Path path;
 
-    MessageStore(final Path path) {
+    public MessageStore(final Path path) {
         this.path = path;
     }
 
