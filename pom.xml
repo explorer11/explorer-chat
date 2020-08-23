@@ -23,11 +23,12 @@
 	
 	<modules>
 		<module>chat-common</module>
+        <module>chat-save</module>
         <module>chat-solr</module>
         <module>chat-client</module>
         <module>chat-users</module>
-        <module>chat-server</module>
         <module>chat-data</module>
+        <module>chat-server</module>
     </modules>
 
     <dependencies>

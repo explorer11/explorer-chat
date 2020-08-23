@@ -41,6 +41,6 @@ class MessageSender implements Runnable {
     }
 
     void send(final ChatMessage chatMessage){
-        solrSender.send(chatMessage);
+        solrSender.save(chatMessage);
     }
 }

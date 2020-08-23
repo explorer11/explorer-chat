@@ -2,6 +2,7 @@ package org.explorer.chat;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.explorer.chat.save.MessageSave;
 import org.explorer.chat.common.ChatMessage;
 
 import java.io.FileWriter;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class MessageStore {
+public class MessageStore implements MessageSave {
 
     private final String SEPARATOR = "|";
 
@@ -23,7 +24,7 @@ class MessageStore {
         this.path = path;
     }
 
-    void save(final ChatMessage chatMessage) {
+    public void save(final ChatMessage chatMessage) {
 
         final FileWriter fileWriter;
         try {

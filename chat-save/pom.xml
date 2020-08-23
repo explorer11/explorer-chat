@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>chat-solr</artifactId>
+    <artifactId>chat-save</artifactId>
 
     <dependencies>
         <dependency>
@@ -17,20 +17,7 @@
             <artifactId>chat-common</artifactId>
             <version>2.3.0-SNAPSHOT</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.explorer.chat</groupId>
-            <artifactId>chat-save</artifactId>
-            <version>2.3.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.solr</groupId>
-            <artifactId>solr-solrj</artifactId>
-            <version>7.5.0</version>
-        </dependency>
     </dependencies>
-
 
 
 </project>

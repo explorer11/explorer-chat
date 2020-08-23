@@ -4,18 +4,19 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.common.SolrInputDocument;
+import org.explorer.chat.save.MessageSave;
 import org.explorer.chat.common.ChatMessage;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-public class SolrSender {
+public class SolrSender implements MessageSave {
 
     private final SolrClient solrClient = new HttpSolrClient.Builder(
             "http://localhost:8983/solr/messages").build();
 
-    public void send(ChatMessage chatMessage){
+    public void save(ChatMessage chatMessage){
 
         final SolrInputDocument solrInputDocument = new SolrInputDocument();
         solrInputDocument.addField("id",
