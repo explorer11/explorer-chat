@@ -1,5 +1,7 @@
 package org.explorer.chat.server;
 
+import org.explorer.chat.data.MessageStore;
+import org.explorer.chat.save.MessageSave;
 import org.explorer.chat.server.collect.MessageIndexing;
 import org.explorer.chat.server.users.ConnectedUsers;
 import org.slf4j.Logger;
@@ -38,7 +40,8 @@ public class Server {
             return;
         }
 
-        final MessageIndexing messageIndexing = new MessageIndexing(path);
+        final MessageSave messageSave = new MessageStore(path);
+        final MessageIndexing messageIndexing = new MessageIndexing(messageSave);
 		messageIndexing.start();
 
 		while(true){

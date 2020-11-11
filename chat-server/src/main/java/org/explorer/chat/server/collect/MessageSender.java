@@ -1,11 +1,9 @@
 package org.explorer.chat.server.collect;
 
 import org.explorer.chat.common.ChatMessage;
-import org.explorer.chat.data.MessageStore;
 import org.explorer.chat.save.MessageSave;
 import org.explorer.chat.solr.SolrSender;
 
-import java.nio.file.Path;
 import java.util.concurrent.BlockingQueue;
 
 class MessageSender implements Runnable {
@@ -29,9 +27,9 @@ class MessageSender implements Runnable {
         this.messageStore = new SolrSender();
     }
 
-    MessageSender(final Path path, final BlockingQueue<ChatMessage> queue) {
+    MessageSender(final MessageSave messageSave, final BlockingQueue<ChatMessage> queue) {
         this.queue = queue;
-        this.messageStore = new MessageStore(path);
+        this.messageStore = messageSave;
     }
 
     @Override

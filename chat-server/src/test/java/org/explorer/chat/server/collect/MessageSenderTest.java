@@ -2,12 +2,15 @@ package org.explorer.chat.server.collect;
 
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.ChatMessageType;
+import org.explorer.chat.data.MessageStore;
+import org.explorer.chat.save.MessageSave;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -38,8 +41,10 @@ public class MessageSenderTest {
     @Test
     public void shouldSend() throws InterruptedException, IOException {
         final BlockingQueue<ChatMessage> queue = new ArrayBlockingQueue<>(1);
+        final Path messagesPath = temporaryFolder.newFile().toPath();
+        final MessageSave messageSave = new MessageStore(messagesPath);
         final MessageSender messageSender = new MessageSender(
-                temporaryFolder.newFile().toPath(), queue);
+                messageSave, queue);
         final MessageSender messageSenderSpy = Mockito.spy(messageSender);
 
         final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()

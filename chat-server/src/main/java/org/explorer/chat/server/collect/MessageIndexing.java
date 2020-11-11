@@ -1,8 +1,8 @@
 package org.explorer.chat.server.collect;
 
 import org.explorer.chat.common.ChatMessage;
+import org.explorer.chat.save.MessageSave;
 
-import java.nio.file.Path;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -18,8 +18,8 @@ public class MessageIndexing {
         this.messageSender = messageSender;
     }
 
-    public MessageIndexing(final Path path) {
-        this.messageSender = new MessageSender(path, queue);
+    public MessageIndexing(final MessageSave messageSave) {
+        this.messageSender = new MessageSender(messageSave, queue);
     }
 
     public void start(){
