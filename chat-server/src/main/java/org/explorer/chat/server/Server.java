@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,7 +16,9 @@ public class Server {
 	private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
     /**
-     * Expecting the path to the users file in the first argument
+     * Expecting
+     * - the path to the users file in the first argument
+     * - the path to the message store directory in the second argument
      */
 	public static void main(String[] args) {
 
@@ -27,7 +30,15 @@ public class Server {
             return;
         }
 
-		final MessageIndexing messageIndexing = messageIndexing(args);
+        final Path path;
+        try {
+            path = messagesPath(args);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        final MessageIndexing messageIndexing = new MessageIndexing(path);
 		messageIndexing.start();
 
 		while(true){
@@ -50,8 +61,16 @@ public class Server {
         return new ConnectedUsers(args[0]);
     }
 
-	static MessageIndexing messageIndexing(final String[] args) {
-		return new MessageIndexing(Paths.get(args[1]));
-	}
+    /**
+     * @throws RuntimeException if args[1] isn't ane existing path
+     */
+    static Path messagesPath(final String[] args) {
+        final String pathArgument = args[1];
+        final Path path = Paths.get(pathArgument);
+        if(!path.toFile().exists()) {
+            throw new RuntimeException("path " + pathArgument + " does not exist");
+        }
+        return path;
+    }
 
 }

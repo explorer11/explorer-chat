@@ -1,4 +1,4 @@
-package org.explorer.chat;
+package org.explorer.chat.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;

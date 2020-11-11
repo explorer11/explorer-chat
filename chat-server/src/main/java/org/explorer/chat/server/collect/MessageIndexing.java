@@ -18,10 +18,6 @@ public class MessageIndexing {
         this.messageSender = messageSender;
     }
 
-    public MessageIndexing() {
-        this.messageSender = new MessageSender(queue);
-    }
-
     public MessageIndexing(final Path path) {
         this.messageSender = new MessageSender(path, queue);
     }

@@ -13,7 +13,7 @@ public class ClientConnectionStrategyTest {
 
     @Test
     public void queue_is_filled() {
-        final MessageIndexing messageIndexingSpy = Mockito.spy(new MessageIndexing());
+        final MessageIndexing messageIndexingSpy = Mockito.mock(MessageIndexing.class);
         final ConnectedUsers connectedUsers = Mockito.mock(ConnectedUsers.class);
         final String clientName = "client";
         final ClientConnectionStrategy clientConnectionStrategy = new ClientConnectionStrategy(

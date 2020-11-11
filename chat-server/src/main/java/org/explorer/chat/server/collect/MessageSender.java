@@ -1,7 +1,7 @@
 package org.explorer.chat.server.collect;
 
-import org.explorer.chat.MessageStore;
 import org.explorer.chat.common.ChatMessage;
+import org.explorer.chat.data.MessageStore;
 import org.explorer.chat.save.MessageSave;
 import org.explorer.chat.solr.SolrSender;
 
