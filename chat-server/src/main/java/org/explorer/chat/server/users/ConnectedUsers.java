@@ -1,7 +1,10 @@
 package org.explorer.chat.server.users;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.explorer.chat.common.ChatMessage;
+import org.explorer.chat.common.ChatMessageType;
 import org.explorer.chat.common.UsersList;
+import org.explorer.chat.data.MessageStore;
 import org.explorer.chat.server.ChatOutputWriter;
 import org.explorer.chat.users.Users;
 
@@ -9,6 +12,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,17 +29,20 @@ public class ConnectedUsers {
     private final ReadWriteLock reentrantReadWriteLock = new ReentrantReadWriteLock();
     private final Lock readLock = reentrantReadWriteLock.readLock();
     private final Lock writeLock = reentrantReadWriteLock.writeLock();
+    private final MessageStore messageStore;
 
-    public ConnectedUsers(final String stringPath) throws IOException {
+    public ConnectedUsers(final String stringPath, final MessageStore messageStore) throws IOException {
         this.users = new Users(stringPath);
+        this.messageStore = messageStore;
     }
 
-    public ConnectedUsers(final Users users) {
+    public ConnectedUsers(final Users users, final MessageStore messageStore) {
         this.users = users;
+        this.messageStore = messageStore;
     }
 
     public boolean add(final String user,
-                       final OutputStream p,
+                       final OutputStream outputStream,
                        final ChatMessage welcomeMessage) throws IOException {
 
         writeLock.lock();
@@ -46,9 +53,10 @@ public class ConnectedUsers {
         }
 
         try {
-            ChatOutputWriter.INSTANCE.write(welcomeMessage, p);
+            ChatOutputWriter.INSTANCE.write(welcomeMessage, outputStream);
+            sendLastMessages(outputStream);
             users.createNewUser(user);
-            objectWriters.put(user, p);
+            objectWriters.put(user, outputStream);
         } finally {
             writeLock.unlock();
         }
@@ -82,6 +90,25 @@ public class ConnectedUsers {
         readLock.unlock();
         return new UsersList().getUsersList(keys);
 	}
+
+    private void sendLastMessages(final OutputStream outputStream) {
+        try {
+            final List<Pair<String, String>> lastMessages = messageStore.readLast(10);
+            lastMessages.forEach(pair -> {
+                try {
+                    ChatOutputWriter.INSTANCE.write(new ChatMessage.ChatMessageBuilder()
+                            .withMessageType(ChatMessageType.SENTENCE)
+                            .withFromUserMessage(pair.getLeft())
+                            .withMessage(pair.getRight())
+                            .build(), outputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	
 }

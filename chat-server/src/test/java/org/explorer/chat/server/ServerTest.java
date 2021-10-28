@@ -17,20 +17,20 @@ public class ServerTest {
         final File file = new File(ServerTest.class.getResource(
                 "/server-args/users-list.txt").getFile());
         final String[] correctArguments = new String[]{file.getAbsolutePath()};
-        final ConnectedUsers connectedUsers = Server.connectedUsers(correctArguments);
+        final ConnectedUsers connectedUsers = Server.connectedUsers(correctArguments, null);
         assertThat(connectedUsers).isNotNull();
     }
 
     @Test
     public void should_throw_exception_on_invalid_path() {
         final String[] incorrectArguments = new String[]{"test"};
-        assertThatThrownBy(() -> Server.connectedUsers(incorrectArguments))
+        assertThatThrownBy(() -> Server.connectedUsers(incorrectArguments, null))
                 .isInstanceOf(IOException.class);
     }
 
     @Test
     public void should_throw_exception_on_missing_argument() {
-        assertThatThrownBy(() -> Server.connectedUsers(new String[0]))
+        assertThatThrownBy(() -> Server.connectedUsers(new String[0], null))
                 .isInstanceOf(ArrayIndexOutOfBoundsException.class);
     }
 

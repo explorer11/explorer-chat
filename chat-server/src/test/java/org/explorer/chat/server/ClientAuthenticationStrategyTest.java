@@ -2,6 +2,7 @@ package org.explorer.chat.server;
 
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.ChatMessageType;
+import org.explorer.chat.data.MessageStore;
 import org.explorer.chat.server.users.ConnectedUsers;
 import org.explorer.chat.users.Users;
 import org.junit.Before;
@@ -16,7 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ClientAuthenticationStrategyTest {
 
     private final Users users = Mockito.mock(Users.class);
-    private final ConnectedUsers connectedUsers = new ConnectedUsers(users);
+    private final ConnectedUsers connectedUsers = new ConnectedUsers(users,
+            Mockito.mock(MessageStore.class));
 	private final ClientAuthenticationStrategy clientAuthenticationStrategy =
             new ClientAuthenticationStrategy(connectedUsers);
 	

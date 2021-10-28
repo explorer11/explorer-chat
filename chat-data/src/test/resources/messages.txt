@@ -1,3 +1,3 @@
-user|how
-first|hello
 user|bonjour
+first|hello
+user|how

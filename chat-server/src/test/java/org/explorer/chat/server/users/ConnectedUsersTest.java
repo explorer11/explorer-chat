@@ -1,5 +1,6 @@
 package org.explorer.chat.server.users;
 
+import org.explorer.chat.data.MessageStore;
 import org.explorer.chat.users.Users;
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,7 +23,9 @@ public class ConnectedUsersTest {
 
     @Before
     public void before() {
-        connectedUsers = new ConnectedUsers(/*temporaryFolder.newFile().getAbsolutePath()*/users);
+        connectedUsers = new ConnectedUsers(
+                /*temporaryFolder.newFile().getAbsolutePath()*/users,
+                Mockito.mock(MessageStore.class));
     }
 
     @Test

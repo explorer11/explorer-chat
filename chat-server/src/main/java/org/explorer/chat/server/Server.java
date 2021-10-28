@@ -1,7 +1,6 @@
 package org.explorer.chat.server;
 
 import org.explorer.chat.data.MessageStore;
-import org.explorer.chat.save.MessageSave;
 import org.explorer.chat.server.collect.MessageIndexing;
 import org.explorer.chat.server.users.ConnectedUsers;
 import org.slf4j.Logger;
@@ -21,27 +20,30 @@ public class Server {
      * Expecting
      * - the path to the users file in the first argument
      * - the path to the message store directory in the second argument
+     * Example
+     * java -jar target/chat-server-2.3.0-SNAPSHOT.jar D:\\data\\chat-users.txt D:\\data\\chat-messages.txt
      */
-	public static void main(String[] args) {
-
-        final ConnectedUsers connectedUsers;
-        try {
-            connectedUsers = connectedUsers(args);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
+	public static void main(final String[] args) {
 
         final Path path;
         try {
             path = messagesPath(args);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             e.printStackTrace();
             return;
         }
 
-        final MessageSave messageSave = new MessageStore(path);
-        final MessageIndexing messageIndexing = new MessageIndexing(messageSave);
+        final MessageStore messageStore = new MessageStore(path);
+        final ConnectedUsers connectedUsers;
+        try {
+            connectedUsers = connectedUsers(args, messageStore);
+        } catch (final IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+
+        final MessageIndexing messageIndexing = new MessageIndexing(messageStore);
 		messageIndexing.start();
 
 		while(true){
@@ -49,7 +51,7 @@ public class Server {
 
 				final ClientSocketManager clientSocketManager = new ClientSocketManager(
 						ChatServerSocket.INSTANCE.getServerSocket().accept(),
-						messageIndexing, connectedUsers);
+                        messageIndexing, connectedUsers);
 				
 				ExecutorService executorService = Executors.newSingleThreadExecutor();
 				executorService.submit(clientSocketManager);
@@ -60,8 +62,8 @@ public class Server {
 		}
 	}
 
-	static ConnectedUsers connectedUsers(final String[] args) throws IOException {
-        return new ConnectedUsers(args[0]);
+	static ConnectedUsers connectedUsers(final String[] args, final MessageStore messageStore) throws IOException {
+        return new ConnectedUsers(args[0], messageStore);
     }
 
     /**

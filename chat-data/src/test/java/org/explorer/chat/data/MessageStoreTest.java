@@ -57,8 +57,8 @@ public class MessageStoreTest {
         emptyMessageStore.save(chatMessage2);
 
         assertThat(emptyMessageStore.readLast(2)).containsExactly(
-                Pair.of("toto", "hello"),
-                Pair.of("user", "bonjour"));
+                Pair.of("user", "bonjour"),
+                Pair.of("toto", "hello"));
     }
 
     @Test
@@ -80,8 +80,8 @@ public class MessageStoreTest {
         emptyMessageStore.save(chatMessage2);
 
         assertThat(emptyMessageStore.readLast(2)).containsExactly(
-                Pair.of(user, "hello"),
-                Pair.of(user, "bonjour"));
+                Pair.of(user, "bonjour"),
+                Pair.of(user, "hello"));
     }
 
     @Test
@@ -104,16 +104,18 @@ public class MessageStoreTest {
     }
 
     @Test
-    public void shouldReadOneLastMessage() throws IOException {
-        assertThat(messagesStore.readLast(1)).containsExactly(Pair.of("user", "how"));
-    }
-
-    @Test
     public void shouldReadSeveralMessages() throws IOException {
         assertThat(messagesStore.readLast(3)).containsExactly(
                         Pair.of("user", "bonjour"),
                         Pair.of("first", "hello"),
                         Pair.of("user", "how"));
+    }
+
+    @Test
+    public void shouldReadLessMessagesThanExisting() throws IOException {
+        assertThat(messagesStore.readLast(2)).containsExactly(
+                Pair.of("first", "hello"),
+                Pair.of("user", "how"));
     }
 
     @Test
