@@ -21,7 +21,7 @@ public class Server {
      * - the path to the users file in the first argument
      * - the path to the message store directory in the second argument
      * Example
-     * java -jar target/chat-server-2.3.0-SNAPSHOT.jar D:\\data\\chat-users.txt D:\\data\\chat-messages.txt
+     * java -jar target/chat-server-2.3.0.jar D:\\data\\chat-users.txt D:\\data\\chat-messages.txt
      */
 	public static void main(final String[] args) {
 
