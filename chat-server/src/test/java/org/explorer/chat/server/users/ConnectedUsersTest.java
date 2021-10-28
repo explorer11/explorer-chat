@@ -25,9 +25,7 @@ public class ConnectedUsersTest {
     public void before() throws IOException {
         final File temporaryFile = temporaryFolder.newFile();
         final String temporaryPath = temporaryFile.getAbsolutePath();
-        connectedUsers = new ConnectedUsers(
-                temporaryPath,
-                Mockito.mock(MessageStore.class));
+        connectedUsers = new ConnectedUsers(temporaryPath, Mockito.mock(MessageStore.class));
     }
 
     @Test
