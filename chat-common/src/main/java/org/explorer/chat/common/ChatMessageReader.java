@@ -7,13 +7,12 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.OutputStream;
 
 public class ChatMessageReader {
 
     private static final Logger logger = LoggerFactory.getLogger(ChatMessageReader.class);
 
-	public void read(InputStream inputStream, OutputStream outputStream, ChatMessageReaderStrategy strategy) {
+	public void read(final InputStream inputStream, final ChatMessageReaderStrategy strategy) {
 		
 		boolean connectionOpened = true;
 		while(connectionOpened) {
@@ -32,7 +31,7 @@ public class ChatMessageReader {
 			}
 			
 			if(chatMessage != null) {
-				boolean closeConnection = strategy.apply(chatMessage, outputStream);
+				boolean closeConnection = strategy.apply(chatMessage);
 				if(closeConnection) {
                     connectionOpened = false;
                 }

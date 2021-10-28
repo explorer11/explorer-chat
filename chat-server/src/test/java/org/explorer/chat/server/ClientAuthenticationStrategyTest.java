@@ -29,7 +29,8 @@ public class ClientAuthenticationStrategyTest {
         final File temporaryFile = temporaryFolder.newFile();
         final String temporaryPath = temporaryFile.getAbsolutePath();
         connectedUsers = new ConnectedUsers(temporaryPath, Mockito.mock(MessageStore.class));
-        clientAuthenticationStrategy = new ClientAuthenticationStrategy(connectedUsers);
+        clientAuthenticationStrategy = new ClientAuthenticationStrategy(connectedUsers,
+                Mockito.mock(OutputStream.class));
 	}
 	
 	@Test
@@ -38,7 +39,7 @@ public class ClientAuthenticationStrategyTest {
 
 		ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder().withMessageType(ChatMessageType.WELCOME)
 				.withFromUserMessage(userName).withMessage("").build();
-		boolean result = clientAuthenticationStrategy.apply(chatMessage, Mockito.mock(OutputStream.class));
+		boolean result = clientAuthenticationStrategy.apply(chatMessage);
 		
         assertThat(result).isTrue();
         assertThat(connectedUsers.getUsersNames()).containsExactly(userName);
@@ -48,7 +49,7 @@ public class ClientAuthenticationStrategyTest {
 	public void empty_client_name_is_incorrect() {
 		ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder().withMessageType(ChatMessageType.WELCOME)
 				.withFromUserMessage("").withMessage("").build();
-		boolean result = clientAuthenticationStrategy.apply(chatMessage, Mockito.mock(OutputStream.class));
+		boolean result = clientAuthenticationStrategy.apply(chatMessage);
         assertThat(result).isFalse();
 	}
 	
@@ -58,10 +59,9 @@ public class ClientAuthenticationStrategyTest {
 		ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder().withMessageType(ChatMessageType.WELCOME)
 				.withFromUserMessage(client).withMessage("").build();
 
-		clientAuthenticationStrategy.apply(chatMessage, Mockito.mock(OutputStream.class));
+		clientAuthenticationStrategy.apply(chatMessage);
 
-		boolean secondAuthentication = clientAuthenticationStrategy.apply(
-		        chatMessage, Mockito.mock(OutputStream.class));
+		boolean secondAuthentication = clientAuthenticationStrategy.apply(chatMessage);
 
         assertThat(secondAuthentication).isFalse();
 	}

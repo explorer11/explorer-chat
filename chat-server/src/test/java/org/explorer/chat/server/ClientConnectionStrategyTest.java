@@ -7,8 +7,6 @@ import org.explorer.chat.server.users.ConnectedUsers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.io.OutputStream;
-
 public class ClientConnectionStrategyTest {
 
     @Test
@@ -24,7 +22,7 @@ public class ClientConnectionStrategyTest {
                 .withMessage("")
                 .build();
 
-        clientConnectionStrategy.apply(chatMessage, Mockito.mock(OutputStream.class));
+        clientConnectionStrategy.apply(chatMessage);
 
         Mockito.verify(messageIndexingSpy).write(Mockito.eq(chatMessage));
     }

@@ -46,6 +46,8 @@ public class Server {
         final MessageIndexing messageIndexing = new MessageIndexing(messageStore);
 		messageIndexing.start();
 
+		logger.info("Server started. Waiting for connections");
+
 		while(true){
 			try {
 

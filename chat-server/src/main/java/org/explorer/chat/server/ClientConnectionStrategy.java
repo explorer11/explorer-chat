@@ -6,8 +6,6 @@ import org.explorer.chat.common.ChatMessageType;
 import org.explorer.chat.server.collect.MessageIndexing;
 import org.explorer.chat.server.users.ConnectedUsers;
 
-import java.io.OutputStream;
-
 public class ClientConnectionStrategy implements ChatMessageReaderStrategy {
 	
 	private final String clientName;
@@ -24,7 +22,7 @@ public class ClientConnectionStrategy implements ChatMessageReaderStrategy {
 	}
 
 	@Override
-	public boolean apply(final ChatMessage chatMessage, final OutputStream outputStream) {
+	public boolean apply(final ChatMessage chatMessage) {
 
 		final ChatMessage builtChatMessage = new ChatMessage.ChatMessageBuilder()
 				.withMessageType(ChatMessageType.SENTENCE)

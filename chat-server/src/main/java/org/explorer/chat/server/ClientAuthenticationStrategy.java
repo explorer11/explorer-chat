@@ -13,10 +13,12 @@ import java.util.Optional;
 public class ClientAuthenticationStrategy implements ChatMessageReaderStrategy {
 	
 	private final ConnectedUsers connectedUsers;
+    private final OutputStream outputStream;
     private String clientName;
 
-    public ClientAuthenticationStrategy(final ConnectedUsers connectedUsers) {
+    public ClientAuthenticationStrategy(final ConnectedUsers connectedUsers, final OutputStream outputStream) {
         this.connectedUsers = connectedUsers;
+        this.outputStream = outputStream;
     }
 
     @Override
@@ -24,12 +26,13 @@ public class ClientAuthenticationStrategy implements ChatMessageReaderStrategy {
 	}
 
 	@Override
-	public boolean apply(final ChatMessage chatMessage, final OutputStream outputStream) {
-		String clientName = chatMessage.getFromUserMessage();
+	public boolean apply(final ChatMessage chatMessage) {
+		final String clientName = chatMessage.getFromUserMessage();
 		
-		final String addResult = addClient(clientName, outputStream);
-		if(!addResult.isEmpty()) {
-		    sendError(addResult, outputStream);
+		final AuthenticationResult authenticationResult = addClient(clientName, outputStream);
+
+		if(!authenticationResult.isSuccess()) {
+		    sendError(authenticationResult.getResult(), outputStream);
 		    return false;
         }
 			
@@ -49,13 +52,13 @@ public class ClientAuthenticationStrategy implements ChatMessageReaderStrategy {
                         .withMessage(usersList)
                         .build(),
                 connectedUsers.getOutputs());
-		
+
 		return true;
 	}
 
-	private String addClient(final String clientName, final OutputStream outputStream) {
+	private AuthenticationResult addClient(final String clientName, final OutputStream outputStream) {
         if(StringUtils.isBlank(clientName)){
-            return "Remplissez le champ";
+            return new AuthenticationResult("Remplissez le champ");
         }
 
         final ChatMessage welcomeMessage = new ChatMessage.ChatMessageBuilder()
@@ -69,14 +72,14 @@ public class ClientAuthenticationStrategy implements ChatMessageReaderStrategy {
             added = connectedUsers.add(clientName, outputStream, welcomeMessage);
         } catch (IOException e) {
             e.printStackTrace();
-            return "Une erreur s'est produite";
+            return new AuthenticationResult("Une erreur s'est produite");
         }
 
         if(!added) {
-            return "Vous avez saisi un nom déjà utilisé";
+            return new AuthenticationResult("Vous avez saisi un nom déjà utilisé");
         }
 
-        return "";
+        return new AuthenticationResult("");
     }
 	
 	private void sendError(final String message, final OutputStream outputStream) {
@@ -94,5 +97,22 @@ public class ClientAuthenticationStrategy implements ChatMessageReaderStrategy {
 	Optional<String> getClientName() {
 		return Optional.ofNullable(clientName);
 	}
+
+	private static class AuthenticationResult {
+
+        private final String result;
+
+        private AuthenticationResult(final String result) {
+            this.result = result;
+        }
+
+        private boolean isSuccess() {
+            return result.isEmpty();
+        }
+
+        private String getResult() {
+            return result;
+        }
+    }
 
 }

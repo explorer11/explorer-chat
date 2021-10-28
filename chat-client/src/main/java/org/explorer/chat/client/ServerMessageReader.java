@@ -19,8 +19,7 @@ public class ServerMessageReader implements Runnable {
 	@Override
 	public void run() {
 		System.out.println("ServerMessageReader::run");
-		new ChatMessageReader().read(inputStream, null, 
-				new ClientChatMessageStrategy(chatActionCommand));		
+		new ChatMessageReader().read(inputStream, new ClientChatMessageStrategy(chatActionCommand));
 		System.out.println("ServerMessageReader::run:finished");
 
 	}

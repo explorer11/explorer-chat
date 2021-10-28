@@ -1,7 +1,5 @@
 package org.explorer.chat.client;
 
-import java.io.OutputStream;
-
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.ChatMessageReaderStrategy;
 import org.explorer.chat.client.command.ChatActionCommand;
@@ -10,13 +8,13 @@ public class ClientChatMessageStrategy implements ChatMessageReaderStrategy {
 
 	private final ChatActionCommand chatActionCommand;
 	
-	ClientChatMessageStrategy(ChatActionCommand chatActionCommand) {
+	ClientChatMessageStrategy(final ChatActionCommand chatActionCommand) {
 		super();
 		this.chatActionCommand = chatActionCommand;
 	}
 
 	@Override
-	public boolean apply(ChatMessage chatMessage, OutputStream outputStream) {
+	public boolean apply(final ChatMessage chatMessage) {
 		chatActionCommand.performServerMessage(chatMessage);
 		return false;
 	}

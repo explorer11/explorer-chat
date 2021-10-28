@@ -42,14 +42,13 @@ public class ClientSocketManager implements Callable<String> {
 			logger.info("call::accept client");
 				
 			final ClientAuthenticationStrategy clientAuthenticationStrategy =
-                    new ClientAuthenticationStrategy(connectedUsers);
-			new ChatMessageReader().read(inputStream, outputStream, 
-					clientAuthenticationStrategy);
+                    new ClientAuthenticationStrategy(connectedUsers, outputStream);
+			new ChatMessageReader().read(inputStream, clientAuthenticationStrategy);
 			logger.info("call::clientName " + clientAuthenticationStrategy.getClientName().orElse(""));
 				
 			clientAuthenticationStrategy.getClientName().ifPresentOrElse(clientName->
-			new ChatMessageReader().read(inputStream, outputStream, 
-					new ClientConnectionStrategy(clientName, messageIndexing, connectedUsers)),
+			new ChatMessageReader().read(inputStream,
+                    new ClientConnectionStrategy(clientName, messageIndexing, connectedUsers)),
 			()->IOUtils.closeQuietly(socket));
 					
 		} catch (IOException e) {
