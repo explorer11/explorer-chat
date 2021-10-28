@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -19,12 +20,13 @@ public class ConnectedUsersTest {
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     private ConnectedUsers connectedUsers;
-    private final Users users = Mockito.mock(Users.class);
 
     @Before
-    public void before() {
+    public void before() throws IOException {
+        final File temporaryFile = temporaryFolder.newFile();
+        final String temporaryPath = temporaryFile.getAbsolutePath();
         connectedUsers = new ConnectedUsers(
-                /*temporaryFolder.newFile().getAbsolutePath()*/users,
+                temporaryPath,
                 Mockito.mock(MessageStore.class));
     }
 
@@ -46,6 +48,11 @@ public class ConnectedUsersTest {
 
     @Test
     public void shouldAddAndCreateUser() throws IOException {
+        final Users users = Mockito.mock(Users.class);
+        connectedUsers = new ConnectedUsers(
+                users,
+                Mockito.mock(MessageStore.class));
+
         final String user1 = "user1";
         connectedUsers.add(user1, Mockito.mock(OutputStream.class), null);
 
