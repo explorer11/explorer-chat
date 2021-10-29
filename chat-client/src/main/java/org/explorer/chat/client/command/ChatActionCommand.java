@@ -1,9 +1,9 @@
 package org.explorer.chat.client.command;
 
 import org.explorer.chat.client.ServerMessageReader;
+import org.explorer.chat.client.presentation.ChatClientFrame;
 import org.explorer.chat.client.presentation.ChatMessagesFrame;
 import org.explorer.chat.client.presentation.ClientConnectionFrame;
-import org.explorer.chat.client.presentation.ChatClientFrame;
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.UsersList;
 
@@ -119,7 +119,7 @@ public class ChatActionCommand implements ActionListener, NonStopCommand, RunCom
 			chatMessagesFrame.getMessagesTextArea().append(messageArrival + "\n");
 			break;
 		case SENTENCE :
-			String messageSentence = chatMessage.getFromUserMessage() + " : " + chatMessage.getMessage();
+			final String messageSentence = ChatMessageFormat.formatSentence(chatMessage);
 			chatMessagesFrame.getMessagesTextArea().append(messageSentence + "\n");
 			break;
 		default :
