@@ -1,7 +1,5 @@
 package org.explorer.chat.data;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.save.MessageSave;
 
@@ -17,8 +15,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MessageStore implements MessageSave {
-
-    private static final String SEPARATOR = "|";
 
     private final Path path;
 
@@ -38,15 +34,16 @@ public class MessageStore implements MessageSave {
         }
 
         final PrintWriter printWriter = new PrintWriter(fileWriter);
-        printWriter.write(chatMessage.getFromUserMessage());
-        printWriter.write(SEPARATOR);
-        printWriter.write(chatMessage.getMessage());
+        printWriter.write(new PersistedMessage(
+                chatMessage.getFromUserMessage(),
+                chatMessage.getMessage(),
+                chatMessage.getInstant()).toString());
         printWriter.println();
         printWriter.close();
     }
 
-    public List<Pair<String,String>> readLast(final int number) throws IOException {
-        final List<Pair<String,String>> lastLines = new ArrayList<>(number);
+    public List<PersistedMessage> readLast(final int number) throws IOException {
+        final List<PersistedMessage> lastLines = new ArrayList<>(number);
         final List<String> linesList;
 
         try(final Stream<String> lines = Files.lines(path)){
@@ -56,10 +53,8 @@ public class MessageStore implements MessageSave {
         final int size = linesList.size();
         final int skip = size >= number ? size - number : 0;
 
-        linesList.stream().skip(skip).forEach(line -> {
-            final String[] split = StringUtils.split(line, SEPARATOR);
-            lastLines.add(Pair.of(split[0], split[1]));
-        });
+        linesList.stream().skip(skip).
+                forEach(line -> lastLines.add(PersistedMessage.parse(line)));
 
         return lastLines;
     }

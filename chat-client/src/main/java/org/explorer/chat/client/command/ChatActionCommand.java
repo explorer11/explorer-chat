@@ -115,12 +115,12 @@ public class ChatActionCommand implements ActionListener, NonStopCommand, RunCom
 			chatMessagesFrame.getMessagesTextArea().append(messageDepart + "\n");
 			break;
 		case ARRIVAL :
-			String messageArrivee = chatMessage.getMessage() + " arrive";
-			chatMessagesFrame.getMessagesTextArea().append(messageArrivee + "\n");
+			String messageArrival = chatMessage.getMessage() + " arrive";
+			chatMessagesFrame.getMessagesTextArea().append(messageArrival + "\n");
 			break;
 		case SENTENCE :
-			String messagePhrase = chatMessage.getFromUserMessage() + " : " + chatMessage.getMessage();
-			chatMessagesFrame.getMessagesTextArea().append(messagePhrase + "\n");
+			String messageSentence = chatMessage.getFromUserMessage() + " : " + chatMessage.getMessage();
+			chatMessagesFrame.getMessagesTextArea().append(messageSentence + "\n");
 			break;
 		default :
 		    break;

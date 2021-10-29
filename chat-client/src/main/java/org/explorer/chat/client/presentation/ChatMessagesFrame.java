@@ -2,6 +2,7 @@ package org.explorer.chat.client.presentation;
 
 import java.awt.Dimension;
 import java.awt.LayoutManager;
+import java.time.Instant;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -124,6 +125,7 @@ public class ChatMessagesFrame extends JFrame implements ChatClientFrame {
 				.withMessageType(ChatMessageType.SENTENCE)
 				.withFromUserMessage("")
 				.withMessage(getTextComponent().getText())
+                .withInstant(Instant.now())
 				.build();
 	}
 

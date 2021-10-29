@@ -7,6 +7,8 @@ import org.explorer.chat.server.users.ConnectedUsers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.time.Instant;
+
 public class ClientConnectionStrategyTest {
 
     @Test
@@ -20,6 +22,7 @@ public class ClientConnectionStrategyTest {
                 .withMessageType(ChatMessageType.SENTENCE)
                 .withFromUserMessage(clientName)
                 .withMessage("")
+                .withInstant(Instant.now())
                 .build();
 
         clientConnectionStrategy.apply(chatMessage);

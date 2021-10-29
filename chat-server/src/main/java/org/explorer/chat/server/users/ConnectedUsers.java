@@ -1,10 +1,10 @@
 package org.explorer.chat.server.users;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.ChatMessageType;
 import org.explorer.chat.common.UsersList;
 import org.explorer.chat.data.MessageStore;
+import org.explorer.chat.data.PersistedMessage;
 import org.explorer.chat.server.ChatOutputWriter;
 import org.explorer.chat.users.Users;
 
@@ -93,13 +93,14 @@ public class ConnectedUsers {
 
     private void sendLastMessages(final OutputStream outputStream) {
         try {
-            final List<Pair<String, String>> lastMessages = messageStore.readLast(10);
-            lastMessages.forEach(pair -> {
+            final List<PersistedMessage> lastMessages = messageStore.readLast(10);
+            lastMessages.forEach(persistedMessage -> {
                 try {
                     ChatOutputWriter.INSTANCE.write(new ChatMessage.ChatMessageBuilder()
                             .withMessageType(ChatMessageType.SENTENCE)
-                            .withFromUserMessage(pair.getLeft())
-                            .withMessage(pair.getRight())
+                            .withFromUserMessage(persistedMessage.getFrom())
+                            .withMessage(persistedMessage.getMessage())
+                            .withInstant(persistedMessage.getInstant().orElse(null))
                             .build(), outputStream);
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -1,14 +1,14 @@
 package org.explorer.chat.common;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class UsersListTest {
 	
-	private UsersList usersList = new UsersList();
+	private final UsersList usersList = new UsersList();
 	
 	@Test
 	public void users_list_is_correctly_formatted_with_one_user() {

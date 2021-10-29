@@ -2,10 +2,10 @@ package org.explorer.chat.client;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.time.Instant;
 
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.common.ChatMessageType;
@@ -16,30 +16,29 @@ import org.mockito.Mockito;
 
 public class ServerMessageReaderTest {
 	
-	private ChatActionCommand chatActionHandler = Mockito.mock(ChatActionCommand.class);
+	private final ChatActionCommand chatActionCommand = Mockito.mock(ChatActionCommand.class);
 
 	private ServerMessageReader serverMessageReader;
 	
-	private ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder().withMessageType(ChatMessageType.LIST)
-			.withFromUserMessage("").withMessage("al,mo").build();
+	private final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+            .withMessageType(ChatMessageType.LIST)
+			.withFromUserMessage("").withMessage("al,mo").withInstant(Instant.now())
+            .build();
 	
 	@Before
 	public void before() {
-		
-		try (FileOutputStream fileOutputStream = new FileOutputStream(
-				"unitTestFile.txt");
-			ObjectOutputStream output = new ObjectOutputStream(fileOutputStream);){
+
+        final String fileName = "unitTestFile.txt";
+        try (FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+             ObjectOutputStream output = new ObjectOutputStream(fileOutputStream)){
 			
 			output.writeObject(chatMessage);
 
-			FileInputStream fileInputStream = new FileInputStream(new File(
-					"unitTestFile.txt"));
+			FileInputStream fileInputStream = new FileInputStream(new File(fileName));
 			
-			serverMessageReader = new ServerMessageReader(fileInputStream, chatActionHandler);
+			serverMessageReader = new ServerMessageReader(fileInputStream, chatActionCommand);
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -47,7 +46,8 @@ public class ServerMessageReaderTest {
 	@Test
 	public void server_message_is_correctly_read() {
 		serverMessageReader.run();
-		Mockito.verify(chatActionHandler, Mockito.times(1)).performServerMessage(Mockito.eq(chatMessage));
+		Mockito.verify(chatActionCommand, Mockito.times(1)).performServerMessage(
+		        Mockito.eq(chatMessage));
 	}
 
 }

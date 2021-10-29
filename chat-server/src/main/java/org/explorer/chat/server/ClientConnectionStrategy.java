@@ -28,6 +28,7 @@ public class ClientConnectionStrategy implements ChatMessageReaderStrategy {
 				.withMessageType(ChatMessageType.SENTENCE)
 				.withFromUserMessage(clientName)
 				.withMessage(chatMessage.getMessage())
+				.withInstant(chatMessage.getInstant())
 				.build();
 		ChatOutputWriter.INSTANCE.writeToAll(builtChatMessage, connectedUsers.getOutputs());
 
