@@ -1,6 +1,8 @@
 package org.explorer.chat.data;
 
 import org.explorer.chat.common.ChatMessage;
+import org.explorer.chat.common.ChatMessageType;
+import org.explorer.chat.save.MessageRead;
 import org.explorer.chat.save.MessageSave;
 
 import java.io.FileWriter;
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MessageStore implements MessageSave {
+public class MessageStore implements MessageSave, MessageRead {
 
     private final Path path;
 
@@ -58,4 +60,18 @@ public class MessageStore implements MessageSave {
 
         return lastLines;
     }
+
+    @Override
+    public List<ChatMessage> findAll() throws IOException {
+        return Files.lines(path)
+                .map(PersistedMessage::parse)
+                .map(message -> new ChatMessage.ChatMessageBuilder()
+                        .withMessageType(ChatMessageType.SENTENCE)
+                        .withMessage(message.getMessage())
+                        .withFromUserMessage(message.getFrom())
+                        .withInstant(message.getInstant().orElse(null))
+                        .build())
+                .collect(Collectors.toList());
+    }
+
 }

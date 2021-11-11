@@ -15,6 +15,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.explorer.chat.data.TestFiles.MESSAGES;
+import static org.explorer.chat.data.TestFiles.SINGLE_MESSAGE;
 
 public class MessageStoreTest {
 
@@ -22,9 +24,9 @@ public class MessageStoreTest {
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     private final File singleMessageFile = new File(MessageStoreTest.class.getResource(
-            "/single_message.txt").getFile());
+            SINGLE_MESSAGE).getFile());
     private final File messagesFile = new File(MessageStoreTest.class.getResource(
-            "/messages.txt").getFile());
+            MESSAGES).getFile());
 
     private final MessageStore singleMessageStore = new MessageStore(Paths.get(singleMessageFile.getAbsolutePath()));
     private final MessageStore messagesStore = new MessageStore(Paths.get(messagesFile.getAbsolutePath()));
