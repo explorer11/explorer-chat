@@ -25,6 +25,7 @@
 		<module>chat-common</module>
         <module>chat-save</module>
         <module>chat-solr</module>
+        <module>chat-elastic</module>
         <module>chat-client</module>
         <module>chat-users</module>
         <module>chat-data</module>
@@ -60,13 +61,13 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.3.3</version>
+            <version>4.0.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
