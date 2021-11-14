@@ -11,7 +11,6 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,8 +43,7 @@ public class MessageStore implements MessageSave, MessageRead {
         printWriter.close();
     }
 
-    public List<PersistedMessage> readLast(final int number) throws IOException {
-        final List<PersistedMessage> lastLines = new ArrayList<>(number);
+    public List<ChatMessage> findLast(final int number) throws IOException {
         final List<String> linesList;
 
         try(final Stream<String> lines = Files.lines(path)){
@@ -55,10 +53,15 @@ public class MessageStore implements MessageSave, MessageRead {
         final int size = linesList.size();
         final int skip = size >= number ? size - number : 0;
 
-        linesList.stream().skip(skip).
-                forEach(line -> lastLines.add(PersistedMessage.parse(line)));
-
-        return lastLines;
+        return linesList.stream().skip(skip)
+                .map(PersistedMessage::parse)
+                .map(message -> new ChatMessage.ChatMessageBuilder()
+                        .withMessageType(ChatMessageType.SENTENCE)
+                        .withMessage(message.getMessage())
+                        .withFromUserMessage(message.getFrom())
+                        .withInstant(message.getInstant().orElse(null))
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override

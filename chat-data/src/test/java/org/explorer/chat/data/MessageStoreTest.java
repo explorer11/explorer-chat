@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -44,12 +43,11 @@ public class MessageStoreTest {
                 .build();
         emptyMessageStore.save(chatMessage);
 
-        final List<PersistedMessage> actual = emptyMessageStore.readLast(1);
+        final List<ChatMessage> actual = emptyMessageStore.findLast(1);
         assertThat(actual).hasSize(1);
-        assertThat(actual).extracting(PersistedMessage::getFrom).containsExactly("user");
-        assertThat(actual).extracting(PersistedMessage::getMessage).containsExactly("bonjour");
-        final Optional<Instant> actualInstant = actual.get(0).getInstant();
-        assertThat(actualInstant).isEqualTo(Optional.of(instant));
+        assertThat(actual).extracting(ChatMessage::getFromUserMessage).containsExactly("user");
+        assertThat(actual).extracting(ChatMessage::getMessage).containsExactly("bonjour");
+        assertThat(actual).extracting(ChatMessage::getInstant).containsExactly(instant);
     }
 
     @Test
@@ -73,14 +71,11 @@ public class MessageStoreTest {
                 .build();
         emptyMessageStore.save(chatMessage2);
 
-        final List<PersistedMessage> actual = emptyMessageStore.readLast(2);
+        final List<ChatMessage> actual = emptyMessageStore.findLast(2);
         assertThat(actual).hasSize(2);
-        assertThat(actual).extracting(PersistedMessage::getFrom).containsExactly("user", "toto");
-        assertThat(actual).extracting(PersistedMessage::getMessage).containsExactly("bonjour", "hello");
-        final Optional<Instant> actualInstant1 = actual.get(0).getInstant();
-        assertThat(actualInstant1).isEqualTo(Optional.of(instant1));
-        final Optional<Instant> actualInstant2 = actual.get(1).getInstant();
-        assertThat(actualInstant2).isEqualTo(Optional.of(instant2));
+        assertThat(actual).extracting(ChatMessage::getFromUserMessage).containsExactly("user", "toto");
+        assertThat(actual).extracting(ChatMessage::getMessage).containsExactly("bonjour", "hello");
+        assertThat(actual).extracting(ChatMessage::getInstant).containsExactly(instant1, instant2);
     }
 
     @Test
@@ -105,14 +100,11 @@ public class MessageStoreTest {
                 .build();
         emptyMessageStore.save(chatMessage2);
 
-        final List<PersistedMessage> actual = emptyMessageStore.readLast(2);
+        final List<ChatMessage> actual = emptyMessageStore.findLast(2);
         assertThat(actual).hasSize(2);
-        assertThat(actual).extracting(PersistedMessage::getFrom).containsExactly(user, user);
-        assertThat(actual).extracting(PersistedMessage::getMessage).containsExactly("bonjour", "hello");
-        final Optional<Instant> actualInstant1 = actual.get(0).getInstant();
-        assertThat(actualInstant1).isEqualTo(Optional.of(instant1));
-        final Optional<Instant> actualInstant2 = actual.get(1).getInstant();
-        assertThat(actualInstant2).isEqualTo(Optional.of(instant2));
+        assertThat(actual).extracting(ChatMessage::getFromUserMessage).containsExactly(user, user);
+        assertThat(actual).extracting(ChatMessage::getMessage).containsExactly("bonjour", "hello");
+        assertThat(actual).extracting(ChatMessage::getInstant).containsExactly(instant1, instant2);
     }
 
     @Test
@@ -120,31 +112,35 @@ public class MessageStoreTest {
         final File file = new File(MessageStoreTest.class.getResource(
                 "/messages_wrongFormat.txt").getFile());
         final MessageStore messageStore = new MessageStore(Paths.get(file.getAbsolutePath()));
-        assertThatThrownBy(() -> messageStore.readLast(1))
+        assertThatThrownBy(() -> messageStore.findLast(1))
                 .isInstanceOf(ArrayIndexOutOfBoundsException.class);
     }
 
     @Test
     public void shouldReadZeroMessage() throws IOException {
-        assertThat(singleMessageStore.readLast(0)).isEmpty();
+        assertThat(singleMessageStore.findLast(0)).isEmpty();
     }
 
     @Test
     public void shouldReadOneMessage() throws IOException {
-        assertThat(singleMessageStore.readLast(1)).containsExactly(
-                new PersistedMessage("user", "bonjour"));
+        assertThat(singleMessageStore.findLast(1)).containsExactly(
+                new ChatMessage.ChatMessageBuilder()
+                        .withFromUserMessage("user")
+                        .withMessage("bonjour")
+                        .withMessageType(ChatMessageType.SENTENCE)
+                        .build());
     }
 
     @Test
     public void shouldReadSeveralMessages() throws IOException {
-        final List<PersistedMessage> actual = messagesStore.readLast(3);
+        final List<ChatMessage> actual = messagesStore.findLast(3);
 
         assertThat(actual).hasSize(3);
-        assertThat(actual).extracting(PersistedMessage::getFrom).containsExactly("user", "first", "user");
-        assertThat(actual).extracting(PersistedMessage::getMessage).containsExactly("bonjour", "hello", "how");
-        assertThat(actual.get(0).getInstant()).isEmpty();
-        assertThat(actual.get(1).getInstant()).isEmpty();
-        assertThat(actual.get(2).getInstant()).isEmpty();
+        assertThat(actual).extracting(ChatMessage::getFromUserMessage).containsExactly("user", "first", "user");
+        assertThat(actual).extracting(ChatMessage::getMessage).containsExactly("bonjour", "hello", "how");
+        assertThat(actual.get(0).getInstant()).isNull();
+        assertThat(actual.get(1).getInstant()).isNull();
+        assertThat(actual.get(2).getInstant()).isNull();
     }
 
     @Test
@@ -153,38 +149,36 @@ public class MessageStoreTest {
                 "/messages_with_instant.txt").getFile());
         final MessageStore messagesStoreWithInstant = new MessageStore(
                 Paths.get(messagesWithInstantFile.getAbsolutePath()));
-        final List<PersistedMessage> actual = messagesStoreWithInstant.readLast(3);
+        final List<ChatMessage> actual = messagesStoreWithInstant.findLast(3);
 
         assertThat(actual).hasSize(3);
-        assertThat(actual).extracting(PersistedMessage::getFrom).containsExactly("user", "first", "user");
-        assertThat(actual).extracting(PersistedMessage::getMessage).containsExactly("bonjour", "hello", "how");
-        assertThat(actual.get(0).getInstant()).isEmpty();
-        final Optional<Instant> instant1 = actual.get(1).getInstant();
-        assertThat(instant1).isEqualTo(Optional.of(Instant.parse("2021-02-24T22:10:50Z")));
-        final Optional<Instant> instant2 = actual.get(2).getInstant();
-        assertThat(instant2).isEqualTo(Optional.of(Instant.parse("2021-02-24T22:11:05Z")));
+        assertThat(actual).extracting(ChatMessage::getFromUserMessage).containsExactly("user", "first", "user");
+        assertThat(actual).extracting(ChatMessage::getMessage).containsExactly("bonjour", "hello", "how");
+        assertThat(actual.get(0).getInstant()).isNull();
+        assertThat(actual.get(1).getInstant()).isEqualTo("2021-02-24T22:10:50Z");
+        assertThat(actual.get(2).getInstant()).isEqualTo("2021-02-24T22:11:05Z");
     }
 
     @Test
     public void shouldReadLessMessagesThanExisting() throws IOException {
-        final List<PersistedMessage> actual = messagesStore.readLast(2);
+        final List<ChatMessage> actual = messagesStore.findLast(2);
 
         assertThat(actual).hasSize(2);
-        assertThat(actual).extracting(PersistedMessage::getFrom).containsExactly("first", "user");
-        assertThat(actual).extracting(PersistedMessage::getMessage).containsExactly("hello", "how");
-        assertThat(actual.get(0).getInstant()).isEmpty();
-        assertThat(actual.get(1).getInstant()).isEmpty();
+        assertThat(actual).extracting(ChatMessage::getFromUserMessage).containsExactly("first", "user");
+        assertThat(actual).extracting(ChatMessage::getMessage).containsExactly("hello", "how");
+        assertThat(actual.get(0).getInstant()).isNull();
+        assertThat(actual.get(1).getInstant()).isNull();
     }
 
     @Test
     public void shouldReadMoreMessagesThanExisting() throws IOException {
-        final List<PersistedMessage> actual = messagesStore.readLast(10);
+        final List<ChatMessage> actual = messagesStore.findLast(10);
 
         assertThat(actual).hasSize(3);
-        assertThat(actual).extracting(PersistedMessage::getFrom).containsExactly("user", "first", "user");
-        assertThat(actual).extracting(PersistedMessage::getMessage).containsExactly("bonjour", "hello", "how");
-        assertThat(actual.get(0).getInstant()).isEmpty();
-        assertThat(actual.get(1).getInstant()).isEmpty();
-        assertThat(actual.get(2).getInstant()).isEmpty();
+        assertThat(actual).extracting(ChatMessage::getFromUserMessage).containsExactly("user", "first", "user");
+        assertThat(actual).extracting(ChatMessage::getMessage).containsExactly("bonjour", "hello", "how");
+        assertThat(actual.get(0).getInstant()).isNull();
+        assertThat(actual.get(1).getInstant()).isNull();
+        assertThat(actual.get(2).getInstant()).isNull();
     }
 }

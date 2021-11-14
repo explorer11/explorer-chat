@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface MessageRead {
 
+    List<ChatMessage> findLast(final int number) throws IOException;
+
     List<ChatMessage> findAll() throws IOException;
 }
