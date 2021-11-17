@@ -24,11 +24,12 @@
 	<modules>
 		<module>chat-common</module>
         <module>chat-save</module>
+        <module>chat-config</module>
         <module>chat-solr</module>
-        <module>chat-elastic</module>
         <module>chat-client</module>
         <module>chat-users</module>
         <module>chat-data</module>
+        <module>chat-elastic</module>
         <module>chat-server</module>
     </modules>
 
