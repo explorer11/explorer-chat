@@ -12,22 +12,22 @@ import org.explorer.chat.data.MessageStore;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class Index {
+import static org.explorer.chat.elastic.Constants.INDEX_NAME;
+import static org.explorer.chat.elastic.Constants.USER_FIELD;
 
-    private static final String INDEX_NAME = "message";
+class Index implements ElasticAction {
 
     private final RestHighLevelClient client = new RestHighLevelClient(
             RestClient.builder(
                     new HttpHost("localhost", 9200, "http"),
                     new HttpHost("localhost", 9201, "http")));
 
-    public static void main(String[] args) throws IOException {
-        final Index index = new Index();
-
-        final List<ChatMessage> messages = index.getMessages(args);
-
-        index.execute(messages);
+    @Override
+    public void execute(final Supplier<String> supplier) throws IOException {
+        final List<ChatMessage> messages = this.getMessages(new String[]{supplier.get()});
+        this.send(messages);
     }
 
     List<ChatMessage> getMessages(final String[] args) throws IOException {
@@ -38,17 +38,13 @@ public class Index {
         return messageStore.findAll();
     }
 
-    private void execute(List<ChatMessage> messages) throws IOException {
-
-        /*final DeleteRequest indexRequest = new DeleteRequest(
-                INDEX_NAME,
-                "1");*/
+    private void send(List<ChatMessage> messages) throws IOException {
 
         for (int i = 0; i < messages.size(); i++) {
             final ChatMessage chatMessage = messages.get(i);
             final IndexRequest indexRequest = new IndexRequest(INDEX_NAME)
                     .id(String.valueOf(i))
-                    .source("user", chatMessage.getFromUserMessage(),
+                    .source(USER_FIELD, chatMessage.getFromUserMessage(),
                             "date", chatMessage.getInstant(),
                             "message", chatMessage.getMessage());
 

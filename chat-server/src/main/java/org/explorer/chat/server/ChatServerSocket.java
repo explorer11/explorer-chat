@@ -8,7 +8,7 @@ import org.explorer.chat.common.ServerPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public enum ChatServerSocket {
+enum ChatServerSocket {
 	
 	INSTANCE;
 
