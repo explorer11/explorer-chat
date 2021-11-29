@@ -15,7 +15,6 @@ server.log
 .metadata/
 .settings/
 .project
-.idea/
 .classpath
 .springBeans
 target/
