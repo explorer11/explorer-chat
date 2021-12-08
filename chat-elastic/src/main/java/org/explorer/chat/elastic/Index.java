@@ -14,8 +14,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static org.explorer.chat.elastic.Constants.INDEX_NAME;
-import static org.explorer.chat.elastic.Constants.USER_FIELD;
+import static org.explorer.chat.elastic.Constants.*;
 
 class Index implements ElasticAction {
 
@@ -45,8 +44,8 @@ class Index implements ElasticAction {
             final IndexRequest indexRequest = new IndexRequest(INDEX_NAME)
                     .id(String.valueOf(i))
                     .source(USER_FIELD, chatMessage.getFromUserMessage(),
-                            "date", chatMessage.getInstant(),
-                            "message", chatMessage.getMessage());
+                            DATE_FIELD, chatMessage.getInstant(),
+                            MESSAGE_FIELD, chatMessage.getMessage());
 
             client.index(indexRequest, RequestOptions.DEFAULT);
         }

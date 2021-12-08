@@ -3,6 +3,7 @@ package org.explorer.chat.elastic;
 enum Action {
 
     INDEX(":index", new Index()),
+    SEARCH(":search", new Search()),
     USER_AGGREGATION(":aggregate", new UserAggregation()),
     EXIT(":exit", new EmptyAction());
 
