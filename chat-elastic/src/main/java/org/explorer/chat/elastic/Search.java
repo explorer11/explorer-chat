@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static org.explorer.chat.elastic.Constants.*;
+import static org.explorer.chat.elastic.Constants.DATE_FIELD;
+import static org.explorer.chat.elastic.Constants.MESSAGE_FIELD;
+import static org.explorer.chat.elastic.Constants.USER_FIELD;
 
 public class Search implements ElasticAction {
 
