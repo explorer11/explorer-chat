@@ -10,6 +10,7 @@
 
 unitTestFile.txt
 server.log
+mvn.log
 
 .recommenders/
 .metadata/
