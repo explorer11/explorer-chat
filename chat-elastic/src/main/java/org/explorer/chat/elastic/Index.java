@@ -8,15 +8,22 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.config.Arguments;
 import org.explorer.chat.data.MessageStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static org.explorer.chat.elastic.Constants.*;
+import static org.explorer.chat.elastic.Constants.DATE_FIELD;
+import static org.explorer.chat.elastic.Constants.INDEX_NAME;
+import static org.explorer.chat.elastic.Constants.MESSAGE_FIELD;
+import static org.explorer.chat.elastic.Constants.USER_FIELD;
 
 class Index implements ElasticAction {
+
+    private static final Logger logger = LoggerFactory.getLogger(Truncate.class);
 
     private final RestHighLevelClient client = new RestHighLevelClient(
             RestClient.builder(
@@ -49,6 +56,8 @@ class Index implements ElasticAction {
 
             client.index(indexRequest, RequestOptions.DEFAULT);
         }
+
+        logger.info("{} documents have been indexed", messages.size());
 
         client.close();
     }

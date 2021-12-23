@@ -12,6 +12,16 @@ public class ActionTest {
     }
 
     @Test
+    public void shouldFindSearchFromString() {
+        assertThat(Action.from(":search")).isEqualTo(Action.SEARCH);
+    }
+
+    @Test
+    public void shouldFindTruncateFromString() {
+        assertThat(Action.from(":truncate")).isEqualTo(Action.TRUNCATE);
+    }
+
+    @Test
     public void shouldFindExitFromString() {
         assertThat(Action.from(":exit")).isEqualTo(Action.EXIT);
     }
