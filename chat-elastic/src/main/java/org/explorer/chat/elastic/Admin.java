@@ -26,5 +26,7 @@ public class Admin {
 
             }
         }
+
+        ElasticClient.INSTANCE.client().close();
     }
 }

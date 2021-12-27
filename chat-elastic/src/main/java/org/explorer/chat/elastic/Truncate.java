@@ -1,10 +1,7 @@
 package org.explorer.chat.elastic;
 
-import org.apache.http.HttpHost;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
@@ -19,11 +16,6 @@ import static org.explorer.chat.elastic.Constants.INDEX_NAME;
 class Truncate implements ElasticAction {
 
     private static final Logger logger = LoggerFactory.getLogger(Truncate.class);
-
-    private final RestHighLevelClient client = new RestHighLevelClient(
-            RestClient.builder(
-                    new HttpHost("localhost", 9200, "http"),
-                    new HttpHost("localhost", 9201, "http")));
 
     @Override
     public void execute(final Supplier<String> supplier) throws IOException {
@@ -44,6 +36,6 @@ class Truncate implements ElasticAction {
             }
         };
 
-        client.deleteByQueryAsync(request, RequestOptions.DEFAULT, listener);
+        ElasticClient.INSTANCE.client().deleteByQueryAsync(request, RequestOptions.DEFAULT, listener);
     }
 }

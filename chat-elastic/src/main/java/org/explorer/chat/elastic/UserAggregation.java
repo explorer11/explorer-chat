@@ -1,11 +1,8 @@
 package org.explorer.chat.elastic;
 
-import org.apache.http.HttpHost;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
@@ -18,11 +15,6 @@ import java.util.function.Supplier;
 import static org.explorer.chat.elastic.Constants.USER_FIELD;
 
 class UserAggregation implements ElasticAction {
-
-	private final RestHighLevelClient client = new RestHighLevelClient(
-		 RestClient.builder(
-				 new HttpHost("localhost", 9200, "http"),
-				 new HttpHost("localhost", 9201, "http")));
 
     @Override
     public void execute(final Supplier<String> supplier) throws IOException {
@@ -38,7 +30,8 @@ class UserAggregation implements ElasticAction {
         searchSourceBuilder.aggregation(aggregation);
         searchRequest.source(searchSourceBuilder);
 
-        final SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+        final SearchResponse searchResponse = ElasticClient.INSTANCE.client()
+                .search(searchRequest, RequestOptions.DEFAULT);
 
         final Aggregations aggregations = searchResponse.getAggregations();
         final Terms byUserAggregation = aggregations.get(BY_USER);

@@ -1,10 +1,7 @@
 package org.explorer.chat.elastic;
 
-import org.apache.http.HttpHost;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.explorer.chat.common.ChatMessage;
 import org.explorer.chat.config.Arguments;
 import org.explorer.chat.data.MessageStore;
@@ -24,11 +21,6 @@ import static org.explorer.chat.elastic.Constants.USER_FIELD;
 class Index implements ElasticAction {
 
     private static final Logger logger = LoggerFactory.getLogger(Truncate.class);
-
-    private final RestHighLevelClient client = new RestHighLevelClient(
-            RestClient.builder(
-                    new HttpHost("localhost", 9200, "http"),
-                    new HttpHost("localhost", 9201, "http")));
 
     @Override
     public void execute(final Supplier<String> supplier) throws IOException {
@@ -54,11 +46,10 @@ class Index implements ElasticAction {
                             DATE_FIELD, chatMessage.getInstant(),
                             MESSAGE_FIELD, chatMessage.getMessage());
 
-            client.index(indexRequest, RequestOptions.DEFAULT);
+            ElasticClient.INSTANCE.client().index(indexRequest, RequestOptions.DEFAULT);
         }
 
         logger.info("{} documents have been indexed", messages.size());
 
-        client.close();
     }
 }
