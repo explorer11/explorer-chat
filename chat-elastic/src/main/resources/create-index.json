@@ -1,0 +1,30 @@
+{
+  "mappings": {
+      "properties": {
+        "user": {
+          "type": "keyword"
+        },
+        "message": {
+            "type": "text",
+            "analyzer": "message_analyzer"
+        },
+        "date": {
+          "type": "date"
+        }
+      }
+    },
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "message_analyzer": {
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "elision",
+            "asciifolding"
+          ]
+        }
+      }
+    }
+  }
+}
