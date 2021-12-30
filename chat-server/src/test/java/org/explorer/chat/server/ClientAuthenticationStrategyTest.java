@@ -37,8 +37,7 @@ public class ClientAuthenticationStrategyTest {
 	public void right_client_name_is_correctly_handled() {
 		final String userName= "mi";
 
-		ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder().withMessageType(ChatMessageType.WELCOME)
-				.withFromUserMessage(userName).withMessage("").build();
+		ChatMessage chatMessage = new ChatMessage(ChatMessageType.WELCOME, userName, "");
 		boolean result = clientAuthenticationStrategy.apply(chatMessage);
 		
         assertThat(result).isTrue();
@@ -47,8 +46,7 @@ public class ClientAuthenticationStrategyTest {
 	
 	@Test
 	public void empty_client_name_is_incorrect() {
-		ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder().withMessageType(ChatMessageType.WELCOME)
-				.withFromUserMessage("").withMessage("").build();
+		ChatMessage chatMessage = new ChatMessage(ChatMessageType.WELCOME, "", "");
 		boolean result = clientAuthenticationStrategy.apply(chatMessage);
         assertThat(result).isFalse();
 	}
@@ -56,8 +54,7 @@ public class ClientAuthenticationStrategyTest {
 	@Test
 	public void an_already_used_client_name_is_incorrect() {
         final String client = "client";
-		ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder().withMessageType(ChatMessageType.WELCOME)
-				.withFromUserMessage(client).withMessage("").build();
+		ChatMessage chatMessage = new ChatMessage(ChatMessageType.WELCOME, client, "");
 
 		clientAuthenticationStrategy.apply(chatMessage);
 

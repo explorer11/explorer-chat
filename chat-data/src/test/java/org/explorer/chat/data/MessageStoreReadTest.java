@@ -26,11 +26,8 @@ public class MessageStoreReadTest {
 
         assertThat(messageStore.findAll())
                 .hasSize(1)
-                .containsOnly(new ChatMessage.ChatMessageBuilder()
-                        .withMessageType(ChatMessageType.SENTENCE)
-                        .withMessage("bonjour")
-                        .withFromUserMessage("user")
-                        .build());
+                .containsOnly(new ChatMessage(
+                        ChatMessageType.SENTENCE, "user", "bonjour"));
     }
 
     @Test
@@ -44,22 +41,10 @@ public class MessageStoreReadTest {
         assertThat(messageStore.findAll())
                 .hasSize(3)
                 .containsOnly(
-                        new ChatMessage.ChatMessageBuilder()
-                                .withMessageType(ChatMessageType.SENTENCE)
-                                .withMessage("bonjour")
-                                .withFromUserMessage("user")
-                                .build(),
-                        new ChatMessage.ChatMessageBuilder()
-                                .withMessageType(ChatMessageType.SENTENCE)
-                                .withMessage("hello")
-                                .withFromUserMessage("first")
-                                .withInstant(Instant.parse("2021-02-24T22:10:50Z"))
-                                .build(),
-                        new ChatMessage.ChatMessageBuilder()
-                                .withMessageType(ChatMessageType.SENTENCE)
-                                .withMessage("how")
-                                .withFromUserMessage("user")
-                                .withInstant(Instant.parse("2021-02-24T22:11:05Z"))
-                                .build());
+                        new ChatMessage(ChatMessageType.SENTENCE, "user", "bonjour"),
+                        new ChatMessage(ChatMessageType.SENTENCE, "first", "hello",
+                                Instant.parse("2021-02-24T22:10:50Z")),
+                        new ChatMessage(ChatMessageType.SENTENCE, "user", "how",
+                                Instant.parse("2021-02-24T22:11:05Z")));
     }
 }

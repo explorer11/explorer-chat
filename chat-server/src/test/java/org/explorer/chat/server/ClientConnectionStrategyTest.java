@@ -18,12 +18,8 @@ public class ClientConnectionStrategyTest {
         final String clientName = "client";
         final ClientConnectionStrategy clientConnectionStrategy = new ClientConnectionStrategy(
                 clientName, messageIndexingSpy, connectedUsers);
-        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
-                .withMessageType(ChatMessageType.SENTENCE)
-                .withFromUserMessage(clientName)
-                .withMessage("")
-                .withInstant(Instant.now())
-                .build();
+        final ChatMessage chatMessage = new ChatMessage(
+                ChatMessageType.SENTENCE, clientName, "", Instant.now());
 
         clientConnectionStrategy.apply(chatMessage);
 

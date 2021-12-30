@@ -15,11 +15,7 @@ public class MessageCollectorTest {
     public void queue_is_filled(){
         final BlockingQueue<ChatMessage> queue = new ArrayBlockingQueue<>(1);
         final MessageCollector messageCollector = new MessageCollector(queue);
-        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
-                .withMessageType(ChatMessageType.SENTENCE)
-                .withFromUserMessage("user")
-                .withMessage("")
-                .build();
+        final ChatMessage chatMessage = new ChatMessage(ChatMessageType.SENTENCE, "user", "");
 
         messageCollector.write(chatMessage);
 

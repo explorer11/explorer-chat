@@ -16,11 +16,7 @@ public class MessageIndexingTest {
 
         messageIndexing.start();
 
-        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
-                .withMessageType(ChatMessageType.SENTENCE)
-                .withFromUserMessage("user")
-                .withMessage("")
-                .build();
+        final ChatMessage chatMessage = new ChatMessage(ChatMessageType.SENTENCE, "user", "");
         messageIndexing.write(chatMessage);
 
         Thread.sleep(100);

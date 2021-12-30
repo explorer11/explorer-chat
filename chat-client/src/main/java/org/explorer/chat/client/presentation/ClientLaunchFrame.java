@@ -1,6 +1,7 @@
 package org.explorer.chat.client.presentation;
 
 import java.awt.Dimension;
+import java.io.Serial;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -15,6 +16,7 @@ import org.explorer.chat.common.ChatMessageType;
 
 public class ClientLaunchFrame extends JFrame implements ChatClientFrame {
 
+	@Serial
 	private static final long serialVersionUID = -6123304171671691527L;
 	
 	private JButton sendButton;
@@ -64,11 +66,7 @@ public class ClientLaunchFrame extends JFrame implements ChatClientFrame {
 
 	@Override
 	public ChatMessage chatMessage() {
-		return new ChatMessage.ChatMessageBuilder()
-				.withMessageType(ChatMessageType.WELCOME)
-				.withFromUserMessage("")
-				.withMessage("")
-				.build();
+		return new ChatMessage(ChatMessageType.WELCOME, "", "");
 	}
 
 }

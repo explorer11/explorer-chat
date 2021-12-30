@@ -26,11 +26,7 @@ public class MessageSenderTest {
         final BlockingQueue<ChatMessage> queue = new ArrayBlockingQueue<>(1);
         final MessageSender messageSender = new MessageSender( queue);
 
-        queue.put(new ChatMessage.ChatMessageBuilder()
-                .withMessage("message")
-                .withMessageType(ChatMessageType.SENTENCE)
-                .withFromUserMessage("user")
-                .build());
+        queue.put(new ChatMessage(ChatMessageType.SENTENCE, "user", "message"));
 
         final ChatMessage chatMessage = messageSender.read();
 
@@ -47,11 +43,7 @@ public class MessageSenderTest {
                 messageSave, queue);
         final MessageSender messageSenderSpy = Mockito.spy(messageSender);
 
-        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
-                .withMessage("message")
-                .withMessageType(ChatMessageType.SENTENCE)
-                .withFromUserMessage("user")
-                .build();
+        final ChatMessage chatMessage = new ChatMessage(ChatMessageType.SENTENCE, "user", "message");
         queue.put(chatMessage);
 
         messageSenderSpy.readAndSend();

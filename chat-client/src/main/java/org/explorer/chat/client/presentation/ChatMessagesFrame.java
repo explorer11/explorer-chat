@@ -2,6 +2,7 @@ package org.explorer.chat.client.presentation;
 
 import java.awt.Dimension;
 import java.awt.LayoutManager;
+import java.io.Serial;
 import java.time.Instant;
 
 import javax.swing.GroupLayout;
@@ -18,6 +19,7 @@ import org.explorer.chat.common.ChatMessageType;
 
 public class ChatMessagesFrame extends JFrame implements ChatClientFrame {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 	
 	private JTextComponent textComponent;
@@ -121,12 +123,8 @@ public class ChatMessagesFrame extends JFrame implements ChatClientFrame {
 	
 	@Override
 	public ChatMessage chatMessage() {
-		return new ChatMessage.ChatMessageBuilder()
-				.withMessageType(ChatMessageType.SENTENCE)
-				.withFromUserMessage("")
-				.withMessage(getTextComponent().getText())
-                .withInstant(Instant.now())
-				.build();
+		return new ChatMessage(
+				ChatMessageType.SENTENCE, "", getTextComponent().getText(), Instant.now());
 	}
 
 	public JTextArea getMessagesTextArea() {
