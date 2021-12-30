@@ -6,25 +6,16 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 
-public class ChatMessage implements Serializable {
+public record ChatMessage(ChatMessageType messageType,
+						  String fromUserMessage,
+						  String message,
+						  Instant instant) implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = -6016135869121638280L;
 
-	private final ChatMessageType messageType;
-	private final String fromUserMessage;
-	private final String message;
-	private final Instant instant;
-
-	private ChatMessage(final ChatMessageType messageType,
-                        final String fromUserMessage,
-                        final String message,
-                        final Instant instant) {
-		super();
-		this.messageType = messageType;
-		this.fromUserMessage = fromUserMessage;
-		this.message = message;
-		this.instant = instant;
+	public ChatMessage(ChatMessageType chatMessageType, String fromUserMessage, String message) {
+		this(chatMessageType, fromUserMessage, message, null);
 	}
 
 	public ChatMessageType getMessageType() {
@@ -39,11 +30,11 @@ public class ChatMessage implements Serializable {
 		return fromUserMessage;
 	}
 
-    public Instant getInstant() {
-        return instant;
-    }
+	public Instant getInstant() {
+		return instant;
+	}
 
-    public static class ChatMessageBuilder {
+	public static class ChatMessageBuilder {
 		private ChatMessageType messageType;
 		private String fromUserMessage;
 		private String message;
@@ -64,56 +55,14 @@ public class ChatMessage implements Serializable {
 			return this;
 		}
 
-        public ChatMessageBuilder withInstant(Instant instant) {
-            this.instant = instant;
-            return this;
-        }
+		public ChatMessageBuilder withInstant(Instant instant) {
+			this.instant = instant;
+			return this;
+		}
 
 		public ChatMessage build() {
 			return new ChatMessage(messageType, fromUserMessage, message, instant);
 		}
-	}
-
-	public static ChatMessageBuilder chatMessage() {
-		return new ChatMessageBuilder();
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((fromUserMessage == null) ? 0 : fromUserMessage.hashCode());
-		result = prime * result + ((message == null) ? 0 : message.hashCode());
-		result = prime * result + ((messageType == null) ? 0 : messageType.hashCode());
-		result = prime * result + ((instant == null) ? 0 : instant.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof ChatMessage))
-			return false;
-		ChatMessage other = (ChatMessage) obj;
-		if (fromUserMessage == null) {
-			if (other.fromUserMessage != null)
-				return false;
-		} else if (!fromUserMessage.equals(other.fromUserMessage))
-			return false;
-		if (message == null) {
-			if (other.message != null)
-				return false;
-		} else if (!message.equals(other.message))
-			return false;
-        if (instant == null) {
-            if (other.instant != null)
-                return false;
-        } else if (!instant.equals(other.instant))
-            return false;
-		return messageType == other.messageType;
 	}
 
 	@Override
@@ -125,8 +74,8 @@ public class ChatMessage implements Serializable {
 		}
 		returnedMessage += message;
 		if(instant != null) {
-            returnedMessage += delimiter + instant;
-        }
+			returnedMessage += delimiter + instant;
+		}
 		return returnedMessage;
 	}
 
