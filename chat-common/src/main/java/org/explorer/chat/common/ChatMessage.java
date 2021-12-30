@@ -2,12 +2,13 @@ package org.explorer.chat.common;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Optional;
 
 public class ChatMessage implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = -6016135869121638280L;
 
 	private final ChatMessageType messageType;
@@ -114,7 +115,7 @@ public class ChatMessage implements Serializable {
             return false;
 		return messageType == other.messageType;
 	}
-	
+
 	@Override
 	public String toString() {
 		String delimiter = "::";
@@ -124,7 +125,7 @@ public class ChatMessage implements Serializable {
 		}
 		returnedMessage += message;
 		if(instant != null) {
-            returnedMessage += delimiter + instant.toString();
+            returnedMessage += delimiter + instant;
         }
 		return returnedMessage;
 	}
