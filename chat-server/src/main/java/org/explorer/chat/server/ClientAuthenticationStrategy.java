@@ -38,13 +38,19 @@ public class ClientAuthenticationStrategy implements ChatMessageReaderStrategy {
 			
 		this.clientName = clientName;
 
-		ChatOutputWriter.INSTANCE.writeToAll(new ChatMessage(
-                ChatMessageType.ARRIVAL, "", clientName),
+		ChatOutputWriter.INSTANCE.writeToAll(new ChatMessage.ChatMessageBuilder()
+                        .withMessageType(ChatMessageType.ARRIVAL)
+                        .withFromUserMessage("")
+                        .withMessage(clientName)
+                        .build(),
                 connectedUsers.getOutputs());
 
         final String usersList = connectedUsers.getUsersList();
-        ChatOutputWriter.INSTANCE.writeToAll(new ChatMessage(
-                ChatMessageType.LIST, "", usersList),
+        ChatOutputWriter.INSTANCE.writeToAll(new ChatMessage.ChatMessageBuilder()
+                        .withMessageType(ChatMessageType.LIST)
+                        .withFromUserMessage("")
+                        .withMessage(usersList)
+                        .build(),
                 connectedUsers.getOutputs());
 
 		return true;
@@ -55,8 +61,11 @@ public class ClientAuthenticationStrategy implements ChatMessageReaderStrategy {
             return new AuthenticationResult("Remplissez le champ");
         }
 
-        final ChatMessage welcomeMessage = new ChatMessage(
-                ChatMessageType.WELCOME, "", clientName);
+        final ChatMessage welcomeMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessageType(ChatMessageType.WELCOME)
+                .withFromUserMessage("")
+                .withMessage(clientName)
+                .build();
 
         final boolean added;
         try {
@@ -75,9 +84,11 @@ public class ClientAuthenticationStrategy implements ChatMessageReaderStrategy {
 	
 	private void sendError(final String message, final OutputStream outputStream) {
 		try {
-			ChatOutputWriter.INSTANCE.write(new ChatMessage(
-                    ChatMessageType.CONNECTION_ERROR, "", message),
-					outputStream);
+			ChatOutputWriter.INSTANCE.write(new ChatMessage.ChatMessageBuilder()
+					.withMessageType(ChatMessageType.CONNECTION_ERROR)
+					.withFromUserMessage("")
+					.withMessage(message)
+					.build(), outputStream);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

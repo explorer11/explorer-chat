@@ -1,17 +1,18 @@
 package org.explorer.chat.client;
 
-import org.explorer.chat.client.command.ChatActionCommand;
-import org.explorer.chat.common.ChatMessage;
-import org.explorer.chat.common.ChatMessageType;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.time.Instant;
+
+import org.explorer.chat.common.ChatMessage;
+import org.explorer.chat.common.ChatMessageType;
+import org.explorer.chat.client.command.ChatActionCommand;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 public class ServerMessageReaderTest {
 	
@@ -19,9 +20,11 @@ public class ServerMessageReaderTest {
 
 	private ServerMessageReader serverMessageReader;
 	
-	private final ChatMessage chatMessage = new ChatMessage(
-			ChatMessageType.LIST, "", "al,mo", Instant.now());
-
+	private final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+            .withMessageType(ChatMessageType.LIST)
+			.withFromUserMessage("").withMessage("al,mo").withInstant(Instant.now())
+            .build();
+	
 	@Before
 	public void before() {
 
@@ -31,7 +34,7 @@ public class ServerMessageReaderTest {
 			
 			output.writeObject(chatMessage);
 
-			FileInputStream fileInputStream = new FileInputStream(fileName);
+			FileInputStream fileInputStream = new FileInputStream(new File(fileName));
 			
 			serverMessageReader = new ServerMessageReader(fileInputStream, chatActionCommand);
 

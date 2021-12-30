@@ -19,8 +19,12 @@ public class ChatMessageFormatTest {
     public void shouldFormatSentence() {
         final Instant instant = Instant.parse("2012-04-03T12:15:30.304430800Z");
 
-        final ChatMessage chatMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, FROM, MESSAGE, instant);
+        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withFromUserMessage(FROM)
+                .withMessage(MESSAGE)
+                .withInstant(instant)
+                .build();
 
         final ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset(instant);
         final int hoursOffset = zoneOffset.getTotalSeconds() / 3600;
@@ -34,8 +38,11 @@ public class ChatMessageFormatTest {
     @Test
     public void shouldFormatSentenceWithoutInstant() {
 
-        final ChatMessage chatMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, FROM, MESSAGE, null);
+        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withFromUserMessage(FROM)
+                .withMessage(MESSAGE)
+                .build();
 
         assertThat(ChatMessageFormat.formatSentence(chatMessage)).isEqualTo(FROM + " : " + MESSAGE);
     }

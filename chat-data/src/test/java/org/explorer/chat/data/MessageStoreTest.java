@@ -35,8 +35,12 @@ public class MessageStoreTest {
         final MessageStore emptyMessageStore = new MessageStore(
                 Paths.get(temporaryFolder.newFile().getAbsolutePath()));
         final Instant instant = Instant.parse("2010-10-03T10:15:30.00Z");
-        final ChatMessage chatMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, "user", "bonjour", instant);
+        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withFromUserMessage("user")
+                .withMessage("bonjour")
+                .withInstant(instant)
+                .build();
         emptyMessageStore.save(chatMessage);
 
         final List<ChatMessage> actual = emptyMessageStore.findLast(1);
@@ -50,13 +54,21 @@ public class MessageStoreTest {
     public void shouldSaveToNotEmptyFile() throws IOException {
         final MessageStore emptyMessageStore = new MessageStore(Paths.get(temporaryFolder.newFile().getAbsolutePath()));
         final Instant instant1 = Instant.parse("2010-10-03T10:15:30.00Z");
-        final ChatMessage chatMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, "user", "bonjour", instant1);
+        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withFromUserMessage("user")
+                .withMessage("bonjour")
+                .withInstant(instant1)
+                .build();
         emptyMessageStore.save(chatMessage);
 
         final Instant instant2 = Instant.parse("2012-04-03T10:15:30.00Z");
-        final ChatMessage chatMessage2 = new ChatMessage(
-                ChatMessageType.SENTENCE, "toto", "hello", instant2);
+        final ChatMessage chatMessage2 = new ChatMessage.ChatMessageBuilder()
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withFromUserMessage("toto")
+                .withMessage("hello")
+                .withInstant(instant2)
+                .build();
         emptyMessageStore.save(chatMessage2);
 
         final List<ChatMessage> actual = emptyMessageStore.findLast(2);
@@ -71,13 +83,21 @@ public class MessageStoreTest {
         final MessageStore emptyMessageStore = new MessageStore(Paths.get(temporaryFolder.newFile().getAbsolutePath()));
         final String user = "user";
         final Instant instant1 = Instant.parse("2010-10-03T10:15:30.00Z");
-        final ChatMessage chatMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, user, "bonjour", instant1);
+        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withFromUserMessage(user)
+                .withMessage("bonjour")
+                .withInstant(instant1)
+                .build();
         emptyMessageStore.save(chatMessage);
 
         final Instant instant2 = Instant.parse("2012-04-03T10:15:30.00Z");
-        final ChatMessage chatMessage2 = new ChatMessage(
-                ChatMessageType.SENTENCE, user, "hello", instant2);
+        final ChatMessage chatMessage2 = new ChatMessage.ChatMessageBuilder()
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withFromUserMessage(user)
+                .withMessage("hello")
+                .withInstant(instant2)
+                .build();
         emptyMessageStore.save(chatMessage2);
 
         final List<ChatMessage> actual = emptyMessageStore.findLast(2);
@@ -104,7 +124,11 @@ public class MessageStoreTest {
     @Test
     public void shouldReadOneMessage() throws IOException {
         assertThat(singleMessageStore.findLast(1)).containsExactly(
-                new ChatMessage(ChatMessageType.SENTENCE, "user", "bonjour"));
+                new ChatMessage.ChatMessageBuilder()
+                        .withFromUserMessage("user")
+                        .withMessage("bonjour")
+                        .withMessageType(ChatMessageType.SENTENCE)
+                        .build());
     }
 
     @Test

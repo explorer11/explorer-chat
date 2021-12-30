@@ -55,9 +55,12 @@ public class MessageStore implements MessageSave, MessageRead {
 
         return linesList.stream().skip(skip)
                 .map(PersistedMessage::parse)
-                .map(message -> new ChatMessage(
-                        ChatMessageType.SENTENCE, message.getFrom(), message.getMessage(),
-                        message.getInstant().orElse(null)))
+                .map(message -> new ChatMessage.ChatMessageBuilder()
+                        .withMessageType(ChatMessageType.SENTENCE)
+                        .withMessage(message.getMessage())
+                        .withFromUserMessage(message.getFrom())
+                        .withInstant(message.getInstant().orElse(null))
+                        .build())
                 .collect(Collectors.toList());
     }
 
@@ -65,9 +68,12 @@ public class MessageStore implements MessageSave, MessageRead {
     public List<ChatMessage> findAll() throws IOException {
         return Files.lines(path)
                 .map(PersistedMessage::parse)
-                .map(message -> new ChatMessage(
-                        ChatMessageType.SENTENCE, message.getFrom(), message.getMessage(),
-                        message.getInstant().orElse(null)))
+                .map(message -> new ChatMessage.ChatMessageBuilder()
+                        .withMessageType(ChatMessageType.SENTENCE)
+                        .withMessage(message.getMessage())
+                        .withFromUserMessage(message.getFrom())
+                        .withInstant(message.getInstant().orElse(null))
+                        .build())
                 .collect(Collectors.toList());
     }
 

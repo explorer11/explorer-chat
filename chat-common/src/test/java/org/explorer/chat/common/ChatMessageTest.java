@@ -14,8 +14,11 @@ public class ChatMessageTest {
     @Test
     public void shouldFormatToStringWithoutInstant() {
 
-        final ChatMessage chatMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, FROM_USER_MESSAGE, MESSAGE);
+        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessage(MESSAGE)
+                .withFromUserMessage(FROM_USER_MESSAGE)
+                .withMessageType(ChatMessageType.SENTENCE)
+                .build();
 
         assertThat(chatMessage.toString()).isEqualTo(ChatMessageType.SENTENCE + "::" +
                 FROM_USER_MESSAGE + "::" + MESSAGE);
@@ -25,8 +28,12 @@ public class ChatMessageTest {
     public void shouldFormatToString() {
         final String instant = "2007-12-03T10:15:30Z";
 
-        final ChatMessage chatMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, FROM_USER_MESSAGE, MESSAGE, Instant.parse(instant));
+        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessage(MESSAGE)
+                .withFromUserMessage(FROM_USER_MESSAGE)
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withInstant(Instant.parse(instant))
+                .build();
 
         assertThat(chatMessage.toString()).isEqualTo(ChatMessageType.SENTENCE + "::" +
                 FROM_USER_MESSAGE + "::" + MESSAGE + "::" + instant);
@@ -34,11 +41,17 @@ public class ChatMessageTest {
 
     @Test
     public void shouldBeEqualsWithSameFields() {
-        final ChatMessage chatMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, FROM_USER_MESSAGE, MESSAGE);
+        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessage(MESSAGE)
+                .withFromUserMessage(FROM_USER_MESSAGE)
+                .withMessageType(ChatMessageType.SENTENCE)
+                .build();
 
-        final ChatMessage otherMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, FROM_USER_MESSAGE, MESSAGE);
+        final ChatMessage otherMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessage(MESSAGE)
+                .withFromUserMessage(FROM_USER_MESSAGE)
+                .withMessageType(ChatMessageType.SENTENCE)
+                .build();
 
         assertThat(chatMessage).isEqualTo(otherMessage);
     }
@@ -47,44 +60,70 @@ public class ChatMessageTest {
     public void shouldBeEqualsWithSameFieldsAndInstant() {
         final String instant = "2007-12-03T10:15:30Z";
 
-        final ChatMessage chatMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, FROM_USER_MESSAGE, MESSAGE, Instant.parse(instant));
+        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessage(MESSAGE)
+                .withFromUserMessage(FROM_USER_MESSAGE)
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withInstant(Instant.parse(instant))
+                .build();
 
-        final ChatMessage otherMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, FROM_USER_MESSAGE, MESSAGE, Instant.parse(instant));
+        final ChatMessage otherMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessage(MESSAGE)
+                .withFromUserMessage(FROM_USER_MESSAGE)
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withInstant(Instant.parse(instant))
+                .build();
 
         assertThat(chatMessage).isEqualTo(otherMessage);
     }
 
     @Test
     public void shouldNotBeEqualsWithDifferentMessageField() {
-        final ChatMessage chatMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, FROM_USER_MESSAGE, MESSAGE);
+        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessage(MESSAGE)
+                .withFromUserMessage(FROM_USER_MESSAGE)
+                .withMessageType(ChatMessageType.SENTENCE)
+                .build();
 
-        final ChatMessage otherMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, FROM_USER_MESSAGE, "other");
+        final ChatMessage otherMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessage("other")
+                .withFromUserMessage(FROM_USER_MESSAGE)
+                .withMessageType(ChatMessageType.SENTENCE)
+                .build();
 
         assertThat(chatMessage).isNotEqualTo(otherMessage);
     }
 
     @Test
     public void shouldNotBeEqualsWithDifferentUserField() {
-        final ChatMessage chatMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, "other", MESSAGE);
+        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessage(MESSAGE)
+                .withFromUserMessage("other")
+                .withMessageType(ChatMessageType.SENTENCE)
+                .build();
 
-        final ChatMessage otherMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, FROM_USER_MESSAGE, MESSAGE);
+        final ChatMessage otherMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessage(MESSAGE)
+                .withFromUserMessage(FROM_USER_MESSAGE)
+                .withMessageType(ChatMessageType.SENTENCE)
+                .build();
 
         assertThat(chatMessage).isNotEqualTo(otherMessage);
     }
 
     @Test
     public void shouldNotBeEqualsWithDifferentMessageTypeField() {
-        final ChatMessage chatMessage = new ChatMessage(
-                ChatMessageType.ARRIVAL, FROM_USER_MESSAGE, MESSAGE);
+        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessage(MESSAGE)
+                .withFromUserMessage(FROM_USER_MESSAGE)
+                .withMessageType(ChatMessageType.ARRIVAL)
+                .build();
 
-        final ChatMessage otherMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, FROM_USER_MESSAGE, MESSAGE);
+        final ChatMessage otherMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessage(MESSAGE)
+                .withFromUserMessage(FROM_USER_MESSAGE)
+                .withMessageType(ChatMessageType.SENTENCE)
+                .build();
 
         assertThat(chatMessage).isNotEqualTo(otherMessage);
     }
@@ -94,11 +133,19 @@ public class ChatMessageTest {
         final String instant1 = "2007-12-03T10:15:30Z";
         final String instant2 = "2007-12-03T10:15:50Z";
 
-        final ChatMessage chatMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, FROM_USER_MESSAGE, MESSAGE, Instant.parse(instant1));
+        final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessage(MESSAGE)
+                .withFromUserMessage(FROM_USER_MESSAGE)
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withInstant(Instant.parse(instant1))
+                .build();
 
-        final ChatMessage otherMessage = new ChatMessage(
-                ChatMessageType.SENTENCE, FROM_USER_MESSAGE, MESSAGE, Instant.parse(instant2));
+        final ChatMessage otherMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessage(MESSAGE)
+                .withFromUserMessage(FROM_USER_MESSAGE)
+                .withMessageType(ChatMessageType.SENTENCE)
+                .withInstant(Instant.parse(instant2))
+                .build();
 
         assertThat(chatMessage).isNotEqualTo(otherMessage);
     }

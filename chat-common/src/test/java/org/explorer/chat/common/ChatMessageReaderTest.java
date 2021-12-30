@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,7 +14,8 @@ public class ChatMessageReaderTest {
 
 	private final ChatMessageReader chatMessageReader = new ChatMessageReader();
 	
-	private final ChatMessage chatMessage = new ChatMessage(ChatMessageType.LIST, "", "al,mo");
+	private final ChatMessage chatMessage = new ChatMessage.ChatMessageBuilder().withMessageType(ChatMessageType.LIST)
+			.withFromUserMessage("").withMessage("al,mo").build();
 	
 	private final ChatMessageReaderStrategy chatMessageReaderStrategy = Mockito.spy(ChatMessageReaderStrategy.class);
 	
@@ -26,7 +28,8 @@ public class ChatMessageReaderTest {
 			
 			output.writeObject(chatMessage);
 
-			FileInputStream fileInputStream = new FileInputStream("unitTestFile.txt");
+			FileInputStream fileInputStream = new FileInputStream(new File(
+					"unitTestFile.txt"));
 			
 			chatMessageReader.read(fileInputStream, chatMessageReaderStrategy);
 

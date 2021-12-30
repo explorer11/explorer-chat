@@ -24,11 +24,12 @@ public class ClientConnectionStrategy implements ChatMessageReaderStrategy {
 	@Override
 	public boolean apply(final ChatMessage chatMessage) {
 
-		final ChatMessage builtChatMessage = new ChatMessage(
-				ChatMessageType.SENTENCE,
-				clientName,
-				chatMessage.getMessage(),
-				chatMessage.getInstant());
+		final ChatMessage builtChatMessage = new ChatMessage.ChatMessageBuilder()
+				.withMessageType(ChatMessageType.SENTENCE)
+				.withFromUserMessage(clientName)
+				.withMessage(chatMessage.getMessage())
+				.withInstant(chatMessage.getInstant())
+				.build();
 		ChatOutputWriter.INSTANCE.writeToAll(builtChatMessage, connectedUsers.getOutputs());
 
 		messageIndexing.write(builtChatMessage);
@@ -40,11 +41,19 @@ public class ClientConnectionStrategy implements ChatMessageReaderStrategy {
 	public void handleInterruption() {
         connectedUsers.remove(clientName);
 
-        final ChatMessage leavingMessage = new ChatMessage(ChatMessageType.LEAVING, "", clientName);
+        final ChatMessage leavingMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessageType(ChatMessageType.LEAVING)
+                .withFromUserMessage("")
+                .withMessage(clientName)
+                .build();
         ChatOutputWriter.INSTANCE.writeToAll(leavingMessage, connectedUsers.getOutputs());
 
         final String usersList = connectedUsers.getUsersList();
-        final ChatMessage listMessage = new ChatMessage(ChatMessageType.LIST, "", usersList);
+        final ChatMessage listMessage = new ChatMessage.ChatMessageBuilder()
+                .withMessageType(ChatMessageType.LIST)
+                .withFromUserMessage("")
+                .withMessage(usersList)
+                .build();
         ChatOutputWriter.INSTANCE.writeToAll(listMessage, connectedUsers.getOutputs());
 	}
 
