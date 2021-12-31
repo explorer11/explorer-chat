@@ -24,6 +24,7 @@ class Index implements ElasticAction {
 
     @Override
     public void execute(final Supplier<String> supplier) throws IOException {
+        System.out.print("Enter the directory to index>");
         final List<ChatMessage> messages = this.getMessages(new String[]{supplier.get()});
         this.send(messages);
     }
