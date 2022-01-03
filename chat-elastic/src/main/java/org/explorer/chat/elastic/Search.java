@@ -5,6 +5,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -30,7 +31,7 @@ public class Search implements ElasticAction {
         final SearchRequest searchRequest = new SearchRequest(Constants.INDEX_NAME);
 
         final SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        MatchQueryBuilder matchQueryBuilder = matchQueryBuilder(supplier);
+        QueryBuilder matchQueryBuilder = queryBuilder(supplier);
         sourceBuilder.query(matchQueryBuilder);
         searchRequest.source(sourceBuilder);
 
@@ -49,11 +50,48 @@ public class Search implements ElasticAction {
 
     }
 
-    MatchQueryBuilder matchQueryBuilder(final Supplier<String> supplier) {
-        System.out.print("keywords>");
-        final String keywords = supplier.get();
-        System.out.println("the keywords are " + keywords);
+    QueryBuilder queryBuilder(final Supplier<String> supplier) {
 
+        SearchType searchType = type(supplier);
+
+        System.out.print("query>");
+        final String query = supplier.get();
+        System.out.println("the query is " + query);
+
+        switch (searchType) {
+            case phrase -> {
+                return QueryBuilders.matchPhraseQuery(MESSAGE_FIELD, query);
+            }
+            case string -> {
+                return QueryBuilders.queryStringQuery(query);
+            }
+            default -> {
+                final MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery(MESSAGE_FIELD, query);
+                final Operator operator = operator(supplier);
+                matchQueryBuilder.operator(operator);
+                return matchQueryBuilder;
+            }
+        }
+    }
+
+    private SearchType type(final Supplier<String> supplier) {
+        System.out.print("type (match, phrase, default match)>");
+        final String inputType = supplier.get();
+
+        SearchType searchType;
+        try {
+            searchType = SearchType.valueOf(inputType);
+        } catch (final IllegalArgumentException e) {
+            logger.warn("", e);
+            searchType = SearchType.match;
+        }
+
+        System.out.println("the type is " + searchType);
+
+        return searchType;
+    }
+
+    private Operator operator(final Supplier<String> supplier) {
         System.out.print("operator (OR, AND, default OR)>");
         final String inputOperator = supplier.get();
 
@@ -67,8 +105,12 @@ public class Search implements ElasticAction {
 
         System.out.println("the operator is " + operator);
 
-        MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery(MESSAGE_FIELD, keywords);
-        matchQueryBuilder.operator(operator);
-        return matchQueryBuilder;
+        return operator;
+    }
+
+    private enum SearchType {
+        match,
+        phrase,
+        string
     }
 }
