@@ -5,6 +5,8 @@ import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.elasticsearch.index.query.SpanNearQueryBuilder;
+import org.elasticsearch.index.query.SpanTermQueryBuilder;
 import org.junit.Test;
 
 import java.util.function.Supplier;
@@ -203,6 +205,44 @@ public class SearchTest {
     }
 
     @Test
+    public void shouldBuildSpanQuery() {
+        final String type = "span";
+        final String queryString = "apache lucene";
+
+        final Supplier<String> supplier = new Supplier<>() {
+            int i = 0;
+
+            @Override
+            public String get() {
+                if(i == 0) {
+                    i++;
+                    return type;
+                } else {
+                    return queryString;
+                }
+            }
+        };
+
+        final QueryBuilder queryBuilder = search.queryBuilder(supplier);
+
+        assertThat(queryBuilder).isExactlyInstanceOf(SpanNearQueryBuilder.class);
+
+        final SpanNearQueryBuilder spanNearQueryBuilder = (SpanNearQueryBuilder) queryBuilder;
+        assertThat(spanNearQueryBuilder.slop()).isEqualTo(3);
+        assertThat(spanNearQueryBuilder.clauses()).hasSize(2);
+
+        assertThat(spanNearQueryBuilder.clauses().get(0)).isExactlyInstanceOf(SpanTermQueryBuilder.class);
+        final SpanTermQueryBuilder spanTermQueryBuilder0 = (SpanTermQueryBuilder) spanNearQueryBuilder.clauses().get(0);
+        assertThat(spanTermQueryBuilder0.fieldName()).isEqualTo(MESSAGE_FIELD);
+        assertThat(spanTermQueryBuilder0.value()).isEqualTo("apache");
+
+        assertThat(spanNearQueryBuilder.clauses().get(1)).isExactlyInstanceOf(SpanTermQueryBuilder.class);
+        final SpanTermQueryBuilder spanTermQueryBuilder1 = (SpanTermQueryBuilder) spanNearQueryBuilder.clauses().get(1);
+        assertThat(spanTermQueryBuilder1.fieldName()).isEqualTo(MESSAGE_FIELD);
+        assertThat(spanTermQueryBuilder1.value()).isEqualTo("lucene");
+    }
+
+    @Test
     public void shouldBuildStringQuery() {
         final String type = "string";
         final String queryString = "message:(hello OR bonjour)";
@@ -225,7 +265,7 @@ public class SearchTest {
 
         assertThat(queryBuilder).isExactlyInstanceOf(QueryStringQueryBuilder.class);
 
-        final QueryStringQueryBuilder matchQueryBuilder = (QueryStringQueryBuilder) queryBuilder;
-        assertThat(matchQueryBuilder.queryString()).isEqualTo(queryString);
+        final QueryStringQueryBuilder queryStringQueryBuilder = (QueryStringQueryBuilder) queryBuilder;
+        assertThat(queryStringQueryBuilder.queryString()).isEqualTo(queryString);
     }
 }

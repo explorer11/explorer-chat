@@ -7,6 +7,8 @@ import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.SpanNearQueryBuilder;
+import org.elasticsearch.index.query.SpanTermQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -65,6 +67,9 @@ public class Search implements ElasticAction {
             case string -> {
                 return QueryBuilders.queryStringQuery(query);
             }
+            case span -> {
+                return spanNearQueryBuilder(query);
+            }
             default -> {
                 final MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery(MESSAGE_FIELD, query);
                 final Operator operator = operator(supplier);
@@ -72,6 +77,19 @@ public class Search implements ElasticAction {
                 return matchQueryBuilder;
             }
         }
+    }
+
+    private SpanNearQueryBuilder spanNearQueryBuilder(final String query) {
+        String[] words = query.split(" ");
+        SpanNearQueryBuilder spanNearQueryBuilder = QueryBuilders.spanNearQuery(
+                new SpanTermQueryBuilder(MESSAGE_FIELD, words[0]), 3);
+        if(words.length > 1) {
+            for (int i = 1; i < words.length; i++) {
+                spanNearQueryBuilder = spanNearQueryBuilder.addClause(
+                        new SpanTermQueryBuilder(MESSAGE_FIELD, words[i]));
+            }
+        }
+        return spanNearQueryBuilder;
     }
 
     private SearchType type(final Supplier<String> supplier) {
@@ -111,6 +129,7 @@ public class Search implements ElasticAction {
     private enum SearchType {
         match,
         phrase,
+        span,
         string
     }
 }
